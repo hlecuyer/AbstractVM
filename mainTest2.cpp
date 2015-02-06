@@ -106,7 +106,7 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
             instruction_string %= boost::spirit::qi::lexeme[instructions];
             instructionVal_string %= boost::spirit::qi::lexeme[instructionsVal];//
             type_string %= boost::spirit::qi::lexeme[values];
-			comment_string %= boost::spirit::qi::lexeme[';' >> +boost::spirit::ascii::char_];
+			comment_string %= boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_];
 
 			instr %= instruction_string;//
 			instrVal %= instructionVal_string >> type_string >> '(' >> boost::spirit::qi::double_ >> ')';//
