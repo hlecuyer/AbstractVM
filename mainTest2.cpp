@@ -54,17 +54,17 @@ struct instructions_ : boost::spirit::qi::symbols<char, std::string>
 } instructions;
 
 // ici struct pour separer les deux types d'instructions, celles avec valeur et celles sans
-struct instructionsVal_ : boost::spirit::qi::symbols<char, std::string>
-{
-	instructionsVal_()
-		{
-            add
-                ("push"   , "push")
-                ("assert"   , "assert")
-				;
-		}
+// struct instructionsVal_ : boost::spirit::qi::symbols<char, std::string>
+// {
+// 	instructionsVal_()
+// 		{
+//             add
+//                 ("push"   , "push")
+//                 ("assert"   , "assert")
+// 				;
+// 		}
 
-} instructionsVal;
+// } instructionsVal;
 
 struct values_ : boost::spirit::qi::symbols<char, std::string>
 {
@@ -96,6 +96,14 @@ BOOST_FUSION_ADAPT_STRUCT(
     (double, nb)
 )
 
+bool testInstruction(std::string instruction)
+{
+	std::cout << "ici : " << instruction << std::endl;
+	if (instruction != "assert" || instruction != "push")
+		return true;
+	return false;
+}
+
 template <typename Iterator>
 struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(), boost::spirit::ascii::space_type>
 {
@@ -105,22 +113,34 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
         {
 
             instruction_string %= boost::spirit::qi::lexeme[instructions];
-            instructionVal_string %= boost::spirit::qi::lexeme[instructionsVal];//
+            // instructionVal_string %= boost::spirit::qi::lexeme[instructionsVal];//
             type_string %= boost::spirit::qi::lexeme[values];
 			comment_string %= boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_];
 
-			instr %= instruction_string;//
-			instrVal %= instructionVal_string >> type_string >> '(' >> boost::spirit::qi::double_ >> ')';//
+			// instr %= instruction_string;//
+			// instrVal %= instructionVal_string >> type_string >> '(' >> boost::spirit::qi::double_ >> ')';//
 
 			// start = instr | instrVal >> -comment_string >> boost::spirit::qi::eoi;//
 			// start = instruction_string >> -comment_string >> boost::spirit::qi::eoi;//
 
+            // start %=
+			// 	instruction_string [boost::phoenix::ref(rf) = boost::spirit::qi::_1]
+			// 	>> -( type_string [ boost::spirit::_pass = boost::phoenix::bind(testInstruction, boost::phoenix::ref(rf)) ] > '('
+			// 		> boost::spirit::qi::double_ > ')'
+			// 	)
+			// 	>> -comment_string
+			// 	>> boost::spirit::qi::eoi
+            //     ;
+
+			/*
+			** ca marche presque ca, mais ne lance pas d'exeption sur intructionSansValeur > valeur
+			** par contre le parsing fail, comme sur les commentaires
+			*/
             start %=
 				instruction_string [boost::phoenix::ref(rf) = boost::spirit::qi::_1]
-				>> -(
-					(boost::spirit::qi::eps(boost::phoenix::ref(rf) == "assert") | boost::spirit::qi::eps(boost::phoenix::ref(rf) == "push"))
-					> type_string > '('
-					> boost::spirit::qi::double_ > ')'
+				>> -((boost::spirit::qi::eps(boost::phoenix::ref(rf) == "assert") | boost::spirit::qi::eps(boost::phoenix::ref(rf) == "push"))
+					 > type_string > '('
+					 > boost::spirit::qi::double_ > ')'
 				)
 				>> -comment_string
 				>> boost::spirit::qi::eoi
@@ -132,6 +152,15 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 			// 	>> -comment_string
 			// 	>> boost::spirit::qi::eoi
             //     ;
+
+
+			/*
+			** debut de gestion des erreurs, recupere lexception mais ne se declenche pas sur un simple fail
+			*/
+			boost::spirit::qi::on_error<boost::spirit::qi::fail>(
+				start,
+				std::cout << boost::phoenix::val("je suis la !!") << std::endl
+			);
         }
 	std::string		rf;
 
@@ -139,8 +168,8 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instructionVal_string;
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> type_string;
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> comment_string;
-	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instr;//
-	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instrVal;//
+	// boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instr;//
+	// boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instrVal;//
 	boost::spirit::qi::rule<Iterator, avm_instruct(), boost::spirit::ascii::space_type> start;
 };
 
