@@ -5,6 +5,7 @@
 #include <boost/bind.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/include/io.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 #include <iostream>
 #include <string>
@@ -37,9 +38,9 @@ struct instructions_ : boost::spirit::qi::symbols<char, std::string>
 		{
             add
                 ("pop"    , "pop")
-                // ("push"   , "push")
+                ("push"   , "push")
                 ("dump"  , "dump")
-                // ("assert"   , "assert")
+                ("assert"   , "assert")
                 ("add"    , "add")
                 ("sub"   , "sub")
                 ("mul"  , "mul")
@@ -115,12 +116,24 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 			// start = instruction_string >> -comment_string >> boost::spirit::qi::eoi;//
 
             start %=
-				instruction_string
-				>> -(type_string >> '(' >> boost::spirit::qi::double_ >> ')')
+				instruction_string [boost::phoenix::ref(rf) = boost::spirit::qi::_1]
+				>> -(
+					(boost::spirit::qi::eps(boost::phoenix::ref(rf) == "assert") | boost::spirit::qi::eps(boost::phoenix::ref(rf) == "push"))
+					> type_string > '('
+					> boost::spirit::qi::double_ > ')'
+				)
 				>> -comment_string
 				>> boost::spirit::qi::eoi
                 ;
+
+            // start %=
+			// 	instruction_string
+			// 	>> -(type_string >> '(' >> boost::spirit::qi::double_ >> ')')
+			// 	>> -comment_string
+			// 	>> boost::spirit::qi::eoi
+            //     ;
         }
+	std::string		rf;
 
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instruction_string;
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instructionVal_string;
