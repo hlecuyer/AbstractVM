@@ -98,7 +98,10 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 			*/
 			boost::spirit::qi::on_error<boost::spirit::qi::fail>(
 				start,
-				std::cout << boost::phoenix::val("je suis la !!") << std::endl
+				std::cout << boost::phoenix::val("AbstractVM : No value after token : ") << boost::phoenix::val(rf) << std::endl,
+				throw std::exception()
+				// throw Parser::ParsingException()
+				// std::cout << boost::phoenix::val("je suis la !!") << std::endl
 			);
         }
 	std::string		rf;
@@ -109,6 +112,7 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> comment_string;
 	boost::spirit::qi::rule<Iterator, avm_instruct(), boost::spirit::ascii::space_type> start;
 };
+
 
 
 class Parser

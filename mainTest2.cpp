@@ -144,10 +144,10 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 				)
 				>> -comment_string
 				>> boost::spirit::qi::eoi
-				| (instruction_string
-                >> -(type_string >> '(' >> boost::spirit::qi::double_ >> ')')
-				>> -comment_string
-				>> boost::spirit::qi::eoi)
+				// | (instruction_string
+                // >> -(type_string >> '(' >> boost::spirit::qi::double_ >> ')')
+				// >> -comment_string
+				// >> boost::spirit::qi::eoi)
                 ;
 
             // start %=

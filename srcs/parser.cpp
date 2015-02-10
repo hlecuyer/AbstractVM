@@ -1,5 +1,14 @@
 
-#include "Parser.hpp"
+#include "parser.hpp"
+
+
+void			Parser::_checkFailedInstruction( std::string instruction )
+{
+	if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_], boost::spirit::ascii::space))
+		return ;
+	else
+		throw Parser::ParsingException();
+}
 
 
 Parser::Parser(){
@@ -32,7 +41,7 @@ Parser::~Parser()
 //		this->_fd.close();
 }
 
-Parser &		Parser::operator=( const Parser & src )
+Parser &					Parser::operator=( const Parser & src )
 {
 	this->_instructionList = src.getInstructionList();
 	this->_fd = src.getFd();
