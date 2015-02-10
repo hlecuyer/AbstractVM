@@ -115,11 +115,17 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 			// start = instruction_string >> -comment_string >> boost::spirit::qi::eoi;//
 
             start %=
-				instruction_string
-				>> -(type_string >> '(' >> boost::spirit::qi::double_ >> ')')
+				(instruction_string
+                >> -(type_string >> '(' >> boost::spirit::qi::double_ >> ')')
 				>> -comment_string
-				>> boost::spirit::qi::eoi
+				>> boost::spirit::qi::eoi)
+				| (instruction_string
+                >> -(type_string >> '(' >> boost::spirit::qi::double_ >> ')')
+				>> -comment_string
+				>> boost::spirit::qi::eoi)
                 ;
+
+
         }
 
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instruction_string;

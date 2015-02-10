@@ -35,7 +35,7 @@ namespace client
     ///////////////////////////////////////////////////////////////////////////
     //[tutorial_numlist2
     template <typename Iterator>
-    bool parse_numbers(Iterator first, Iterator last, std::vector<double>& v)
+    bool parse_numbers(Iterator first, Iterator last, std::vector<std::string>& v)
     {
         using qi::double_;
         using qi::phrase_parse;
@@ -46,10 +46,18 @@ namespace client
         bool r = phrase_parse(first, last,
 
 							  //  Begin grammar
-							  (
-								  double_[push_back(phoenix::ref(v), _1)]
-								  >> *(',' >> double_[push_back(phoenix::ref(v), _1)])
-								  )
+            (lit("push") [boost::phoenix::push_back(boost::phoenix::ref(v), "push")]
+            | lit("pop") [boost::phoenix::push_back(boost::phoenix::ref(v), "pop")]
+            | lit("dump") [boost::phoenix::push_back(boost::phoenix::ref(v), "dump")]
+            | lit("assert") [boost::phoenix::push_back(boost::phoenix::ref(v), "assert")]
+            | lit("add") [boost::phoenix::push_back(boost::phoenix::ref(v), "add")]
+            | lit("sub") [boost::phoenix::push_back(boost::phoenix::ref(v), "sub")]
+            | lit("mul") [boost::phoenix::push_back(boost::phoenix::ref(v), "mul")]
+            | lit("div") [boost::phoenix::push_back(boost::phoenix::ref(v), "div")]
+            | lit("mod") [boost::phoenix::push_back(boost::phoenix::ref(v), "mod")]
+            | lit("print") [boost::phoenix::push_back(boost::phoenix::ref(v), "print")]
+            | lit("exit") [boost::phoenix::push_back(boost::phoenix::ref(v), "exit")]
+            )
 							  ,
 							  //  End grammar
 
@@ -61,7 +69,29 @@ namespace client
     }
     //]
 }
+//            (lit("push") [boost::phoenix::push_back(boost::phoenix::ref(v), "push")]
+//             | lit("pop") [boost::phoenix::push_back(boost::phoenix::ref(v), "pop")]
+//             | lit("dump") [boost::phoenix::push_back(boost::phoenix::ref(v), "dump")]
+//             | lit("assert") [boost::phoenix::push_back(boost::phoenix::ref(v), "assert")]
+//             | lit("add") [boost::phoenix::push_back(boost::phoenix::ref(v), "add")]
+//             | lit("su b") [boost::phoenix::push_back(boost::phoenix::ref(v), "sub")]
+//             | lit("mul") [boost::phoenix::push_back(boost::phoenix::ref(v), "mul")]
+//             | lit("div") [boost::phoenix::push_back(boost::phoenix::ref(v), "div")]
+//             | lit("mod") [boost::phoenix::push_back(boost::phoenix::ref(v), "mod")]
+//             | lit("print") [boost::phoenix::push_back(boost::phoenix::ref(v), "print")]
+//             | lit("exit") [boost::phoenix::push_back(boost::phoenix::ref(v), "exit")]
+//             )
 
+// //              instruction_
+//                 >> boost::spirit::qi::eoi
+//                 // lit("")
+                // >> '{'
+                // >>  int_ >> ','
+                // >>  quoted_string >> ','
+                // >>  quoted_string >> ','
+                // >>  double_
+                // >>  '}'
+                ;
 ////////////////////////////////////////////////////////////////////////////
 //  Main program
 ////////////////////////////////////////////////////////////////////////////
@@ -82,14 +112,14 @@ main()
         if (str.empty() || str[0] == 'q' || str[0] == 'Q')
             break;
 
-		std::vector<double> v;
+		std::vector<std::string> v;
         if (client::parse_numbers(str.begin(), str.end(), v))
         {
 			std::cout << "-------------------------\n";
 			std::cout << "Parsing succeeded\n";
 			std::cout << str << " Parses OK: " << std::endl;
 
-            for (std::vector<double>::size_type i = 0; i < v.size(); ++i)
+            for (std::vector<std::string>::size_type i = 0; i < v.size(); ++i)
 				std::cout << i << ": " << v[i] << std::endl;
 
 			std::cout << "\n-------------------------\n";
