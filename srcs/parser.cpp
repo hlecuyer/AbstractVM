@@ -11,7 +11,8 @@ void			Parser::_checkFailedInstruction( std::string instruction )
 }
 
 
-Parser::Parser(){
+Parser::Parser( void )
+{
 	this->_fd = &(std::cin);
 }
 
@@ -28,12 +29,16 @@ Parser::Parser( std::ifstream* streamIn )
 	this->_fd = streamIn;
 }
 
-Parser::Parser( std::string filename )
-{
-	this->_fd = new std::ifstream(filename);
-	if (!static_cast<std::ifstream*>(this->_fd)->is_open())
-		throw Parser::ParsingException();
-}
+// Parser::Parser( std::string filename )
+// {
+// 	this->_tempFd.open(filename, std::ifstream::in);
+// 	this->_fd = &(this->_tempFd);
+// 	if ((this->_fd)->is_open())
+// 		throw Parser::ParsingException();
+// 	// this->_fd = new std::ifstream(filename);
+// 	// if (!static_cast<std::ifstream*>(this->_fd)->is_open())
+// 	// 	throw Parser::ParsingException();
+// }
 
 Parser::~Parser()
 {
@@ -53,11 +58,13 @@ void						Parser::parseFile( void )
 {
 	std::string			line;
 	bool				ret;
+	// instruction_parser<std::string::iterator>		grammar;
 
 	while (std::getline(*this->_fd, line))
 	{
 		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))
 			return ;
+		// ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), grammar, boost::spirit::ascii::space, this->_instructionList);
 		ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), this->_grammar, boost::spirit::ascii::space, this->_instructionList);
 		if (!ret)
 			this->_checkFailedInstruction(line); //a faire

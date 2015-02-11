@@ -69,6 +69,7 @@ BOOST_FUSION_ADAPT_STRUCT(
     (double, value)
 )
 
+
 template <typename Iterator>
 struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(), boost::spirit::ascii::space_type>
 {
@@ -114,13 +115,13 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 };
 
 
-
 class Parser
 {
 private :
 	/** ATTRIBUTES **/
 	// int							_fd;
 	std::istream*									_fd;
+	// std::ifstream									_tempFd;
 	std::list<avm_instruct>							_instructionList;
 	instruction_parser<std::string::iterator>		_grammar;
 
@@ -133,7 +134,7 @@ public:
 	Parser( const Parser & src );
 	// Parser( int fd );
 	Parser( std::ifstream* streamIn );
-	Parser( std::string filename );
+	// Parser( std::string filename );
 	~Parser();
 
 	Parser &		operator=( const Parser & src );
@@ -143,7 +144,7 @@ public:
 
 	std::list<avm_instruct>		getInstructionList( void ) const;
 	std::istream*				getFd( void ) const;
-	void						dumpDebug( void ); // a faire
+	// void						dumpDebug( void ); // a faire
 
 	class ParsingException : public std::exception
 	{
@@ -151,11 +152,13 @@ public:
 			// ParsingException( void ) throw();
 			// ParsingException( GradeTooHighException const & src ) throw();
 			// ~ParsingException( void ) throw();
-			virtual const char*what() const throw();
+			virtual const char* what() const throw();
 		// private :
 		// 	ParsingException &operator=( ParsingException const & src );
 	};
 };
+
+
 
 #endif /** PARSER_HPP **/
 

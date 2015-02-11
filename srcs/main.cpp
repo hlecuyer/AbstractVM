@@ -18,6 +18,7 @@
 int main(int argc, char const *argv[])
 {
     std::vector<Parser> parser;
+	std::ifstream		stream;
 
 
     if (argc == 2)
@@ -26,7 +27,10 @@ int main(int argc, char const *argv[])
     {
         for (int i = 1; i < argc; i++)
         {
-            parser[i - 1] = Parser(argv[i]);
+			stream.open(argv[i]);
+            parser[i - 1] = Parser(&stream);
+			stream.close();
+            // parser[i - 1] = Parser(argv[i]);
             //process.execute(parser[i - 1].parseFile());
         }
     }
