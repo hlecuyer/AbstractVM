@@ -20,7 +20,8 @@ struct					avm_instruct
 	instr_type			instrType;
 };
 
-struct instructions_ : boost::spirit::qi::symbols<char, std::string>
+
+static struct instructions_ : boost::spirit::qi::symbols<char, std::string>
 {
 	instructions_()
 		{
@@ -41,7 +42,7 @@ struct instructions_ : boost::spirit::qi::symbols<char, std::string>
 
 } instructions;
 
-struct values_ : boost::spirit::qi::symbols<char, std::string>
+static struct values_ : boost::spirit::qi::symbols<char, std::string>
 {
 	values_()
 		{
@@ -99,8 +100,8 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 			*/
 			boost::spirit::qi::on_error<boost::spirit::qi::fail>(
 				start,
-				std::cout << boost::phoenix::val("AbstractVM : No value after token : ") << boost::phoenix::val(rf) << std::endl,
-				throw std::exception()
+				std::cout << boost::phoenix::val("AbstractVM : No value after token : ") << boost::phoenix::val(rf) << std::endl
+				//throw std::exception()
 				// throw Parser::ParsingException()
 				// std::cout << boost::phoenix::val("je suis la !!") << std::endl
 			);
@@ -146,16 +147,16 @@ public:
 	std::istream*				getFd( void ) const;
 	// void						dumpDebug( void ); // a faire
 
-	class ParsingException : public std::exception
-	{
-		public :
-			// ParsingException( void ) throw();
-			// ParsingException( GradeTooHighException const & src ) throw();
-			// ~ParsingException( void ) throw();
-			virtual const char* what() const throw();
-		// private :
-		// 	ParsingException &operator=( ParsingException const & src );
-	};
+	// class ParsingException : public std::exception
+	// {
+	// 	public :
+	// 		// ParsingException( void ) throw();
+	// 		// ParsingException( GradeTooHighException const & src ) throw();
+	// 		// ~ParsingException( void ) throw();
+	// 		virtual const char* what() const throw();
+	// 	// private :
+	// 	// 	ParsingException &operator=( ParsingException const & src );
+	// };
 };
 
 

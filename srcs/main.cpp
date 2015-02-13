@@ -14,25 +14,40 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stdio.h>
 
-int main(int argc, char const *argv[])
+void    print_som(avm_instruct test) {
+        std::cout << test.name << std::endl;
+        std::cout << test.instrType.type << std::endl << std::endl;
+}
+
+int main(int argc, char **argv)
 {
-    std::vector<Parser> parser;
-	std::ifstream		stream;
+//    std::vector<Parser> parser;
+    Parser              parser;
+    std::ifstream       stream;
+    std::list<avm_instruct> test;
 
-
-    if (argc == 2)
-        parser[0] = Parser();
+    if (argc == 1)
+        parser = Parser();
     else
     {
-        for (int i = 1; i < argc; i++)
-        {
-			stream.open(argv[i]);
-            parser[i - 1] = Parser(&stream);
-			stream.close();
+        // for (int i = 1; i < argc; i++)
+        // {
+            printf("la \n");
+			stream.open(argv[1]);
+            printf("la \n");
+            parser = Parser(&stream);
+            printf("la \n");
+            parser.parseFile();
+            printf("la \n");
+            test = parser.getInstructionList();
+            printf("la \n");
+            for_each(test.begin(), test.end(), print_som);
+            printf("la \n");
             // parser[i - 1] = Parser(argv[i]);
             //process.execute(parser[i - 1].parseFile());
-        }
+    //     }
     }
     return 0;
 }

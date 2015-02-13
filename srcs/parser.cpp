@@ -7,7 +7,7 @@ void			Parser::_checkFailedInstruction( std::string instruction )
 	if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_], boost::spirit::ascii::space))
 		return ;
 	else
-		throw Parser::ParsingException();
+		throw std::exception();
 }
 
 
@@ -62,6 +62,7 @@ void						Parser::parseFile( void )
 
 	while (std::getline(*this->_fd, line))
 	{
+		std::cout << line << std::endl;
 		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))
 			return ;
 		// ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), grammar, boost::spirit::ascii::space, this->_instructionList);
