@@ -1,0 +1,9 @@
+; -----------
+; simple1.avm
+; -----------
+
+add
+mul
+push int16(42)
+assert float(35)
+pop

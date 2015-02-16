@@ -17,8 +17,10 @@
 #include <stdio.h>
 
 void    print_som(avm_instruct test) {
-        std::cout << test.name << std::endl;
-        std::cout << test.instrType.type << std::endl << std::endl;
+        std::cout << test.name;
+		if (test.instrType.type != "")
+			std::cout << " [" << test.instrType.type << "] [" << test.instrType.value << "]";
+		std::cout << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -34,17 +36,27 @@ int main(int argc, char **argv)
     {
         // for (int i = 1; i < argc; i++)
         // {
-            printf("la \n");
+            // printf("la \n");
 			stream.open(argv[1]);
-            printf("la \n");
-            parser = Parser(&stream);
-            printf("la \n");
-            parser.parseFile();
-            printf("la \n");
+            // printf("la \n");
+			try
+			{
+				parser = Parser(&stream);
+				// printf("la \n");
+				parser.parseFile();
+			}
+			catch (Parser::ParsingException & e)
+			{
+				std::cout << e.what() << std::endl;
+				std::exit(-1);
+			}
+            // printf("la \n");
             test = parser.getInstructionList();
-            printf("la \n");
+            // printf("la \n");
+			std::cout << "****" << std::endl << "START DEBUG :" << std::endl;
             for_each(test.begin(), test.end(), print_som);
-            printf("la \n");
+			std::cout << "****" << std::endl;
+            // printf("la \n");
             // parser[i - 1] = Parser(argv[i]);
             //process.execute(parser[i - 1].parseFile());
     //     }

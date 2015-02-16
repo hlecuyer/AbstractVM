@@ -2,21 +2,35 @@
 #include "parser.hpp"
 
 
+// ** PRIVATE FUNCTION ** //
+
 void			Parser::_checkFailedInstruction( std::string instruction )
 {
+	// std::cout << "CheckFailedInstruction : " << instruction << std::endl; //DEBUG
 	if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_], boost::spirit::ascii::space))
+	{
+		// std::cout << "return comment or empty line" << std::endl;
 		return ;
+	}
 	else
-		throw std::exception();
+	{
+		if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), instructions >> boost::spirit::qi::lexeme[values] >> '(' >> boost::spirit::qi::double_ >> ')' >> -(boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_]) >> boost::spirit::qi::eoi, boost::spirit::ascii::space))
+			std::cout << "AbstractVM: value after token with no required value" << std::endl;
+		std::cout << "AbstractVM: error line " << this->_lineCount << " : " << instruction << std::endl;
+		throw Parser::ParsingException();
+	}
+		// throw std::exception();
 }
 
 
-Parser::Parser( void )
+// ** CANONICAL ** //
+
+Parser::Parser( void ) : _lineCount(0)
 {
 	this->_fd = &(std::cin);
 }
 
-Parser::Parser( const Parser & src )
+Parser::Parser( const Parser & src ) : _lineCount(0)
 {
 	*this = src;
 }
@@ -24,7 +38,7 @@ Parser::Parser( const Parser & src )
 // Parser::Parser( int fd ) : _fd(fd)
 // {}
 
-Parser::Parser( std::ifstream* streamIn )
+Parser::Parser( std::ifstream* streamIn ) : _lineCount(0)
 {
 	this->_fd = streamIn;
 }
@@ -62,10 +76,13 @@ void						Parser::parseFile( void )
 
 	while (std::getline(*this->_fd, line))
 	{
-		std::cout << line << std::endl;
+		this->_lineCount++;
+		std::cout << "Getline : " << line << std::endl; //DEBUG
 		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))
 			return ;
 		// ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), grammar, boost::spirit::ascii::space, this->_instructionList);
+		if (line == "")
+			continue ;
 		ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), this->_grammar, boost::spirit::ascii::space, this->_instructionList);
 		if (!ret)
 			this->_checkFailedInstruction(line); //a faire
@@ -86,4 +103,9 @@ std::list<avm_instruct>		Parser::getInstructionList( void ) const
 std::istream*				Parser::getFd( void ) const
 {
 	return (this->_fd);
+}
+
+const char*					Parser::ParsingException::what() const throw()
+{
+	return "AbstractVM: Parsing error";
 }
