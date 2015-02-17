@@ -1,4 +1,4 @@
-enum class eOperandType { 
+enum class eOperandType {
      int8,
      int16,
      int32,

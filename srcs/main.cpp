@@ -16,11 +16,12 @@
 #include <vector>
 #include <stdio.h>
 
-void    print_som(avm_instruct test) {
-        std::cout << test.name;
-		if (test.instrType.type != "")
-			std::cout << " [" << test.instrType.type << "] [" << test.instrType.value << "]";
-		std::cout << std::endl;
+void    print_som(avm_instruct test)
+{
+	std::cout << test.name;
+	if (test.instrType.type != "")
+		std::cout << " [" << test.instrType.type << "] [" << test.instrType.value << "]";
+	std::cout << std::endl;
 }
 
 int main(int argc, char **argv)

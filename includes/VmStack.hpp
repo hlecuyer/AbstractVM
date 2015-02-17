@@ -12,20 +12,20 @@
 
 #include <stack>
 
-#ifndef MUTANTSTACK_HPP
-#define MUTANTSTACK_HPP
+#ifndef VMSTACK_HPP
+#define VMSTACK_HPP
 
 
 template <typename T>
-class MutantStack : public std::stack<T>
+class VmStack : public std::stack<T>
 {
 	private:
 		typedef std::stack<T> base;
 
 	public:
-	MutantStack(void) {}
-		~MutantStack(void) {}
-	MutantStack(MutantStack const & o): base(o) {}
+	VmStack(void) {}
+		~VmStack(void) {}
+	VmStack(VmStack const & o): base(o) {}
 
 	typedef typename base::container_type::iterator	iterator;
 	using			base::operator=;
@@ -35,4 +35,4 @@ class MutantStack : public std::stack<T>
 };
 
 
-#endif
+#endif // ** VMSTACK ** //
