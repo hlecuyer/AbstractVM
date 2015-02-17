@@ -31,7 +31,10 @@ int main(int argc, char **argv)
     std::list<avm_instruct> test;
 
     if (argc == 1)
+	{
         parser = Parser();
+		parser.parseFile();
+	}
     else
     {
         // for (int i = 1; i < argc; i++)
@@ -50,10 +53,13 @@ int main(int argc, char **argv)
 				std::cout << e.what() << std::endl;
 				std::exit(-1);
 			}
+			// std::cout << "****" << std::endl << "START PARSER DEBUG :" << std::endl;
+			// parser.dumpDebug();
+			// std::cout << "****" << std::endl;
             // printf("la \n");
             test = parser.getInstructionList();
             // printf("la \n");
-			std::cout << "****" << std::endl << "START DEBUG :" << std::endl;
+			std::cout << "****" << std::endl << "START RETURN DEBUG :" << std::endl;
             for_each(test.begin(), test.end(), print_som);
 			std::cout << "****" << std::endl;
             // printf("la \n");

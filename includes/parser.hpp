@@ -81,17 +81,8 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
             type_string %= boost::spirit::qi::lexeme[values];
 			comment_string %= boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_];
 
-			// instructionVal_string = (boost::spirit::qi::eps(boost::phoenix::ref(rf) == "assert") | boost::spirit::qi::eps(boost::phoenix::ref(rf) == "push"))
-			// 	> type_string > '('
-			// 	> boost::spirit::qi::double_ > ')'
-			// 	;
-			/*
-			** ca marche presque ca, mais ne lance pas d'exeption sur intructionSansValeur > valeur
-			** par contre le parsing fail, comme sur les commentaires
-			*/
             start %=
 				instruction_string [boost::phoenix::ref(rf) = boost::spirit::qi::_1]
-				// >> -instructionVal_string
 				>> -((boost::spirit::qi::eps(boost::phoenix::ref(rf) == "assert") | boost::spirit::qi::eps(boost::phoenix::ref(rf) == "push"))
 					 > type_string > '('
 					 > boost::spirit::qi::double_ > ')'
@@ -101,24 +92,15 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
                 ;
 
 			start.name("start_tag");
-			/*
-			** debut de gestion des erreurs, recupere lexception mais ne se declenche pas sur un simple fail
-			*/
+
 			boost::spirit::qi::on_error<boost::spirit::qi::fail>(
 				start,
-				// std::cout << boost::phoenix::val("AbstractVM : No value after token : ") << boost::phoenix::val(rf) << std::endl
 				std::cout << boost::phoenix::val("AbstractVM : No value after token : ") << boost::phoenix::construct<std::string>(boost::spirit::qi::_1, boost::spirit::qi::_3) << std::endl
-
-
-				//throw std::exception()
-				// throw Parser::ParsingException()
-				// std::cout << boost::phoenix::val("je suis la !!") << std::endl
 			);
         }
 	std::string		rf;
 
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instruction_string;
-	// boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instructionVal_string;//a supprimer ?
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> type_string;
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> comment_string;
 	boost::spirit::qi::rule<Iterator, avm_instruct(), boost::spirit::ascii::space_type> start;
@@ -129,23 +111,24 @@ class Parser
 {
 private :
 	/** ATTRIBUTES **/
-	// int							_fd;
 	std::istream*									_fd;
-	// std::ifstream									_tempFd;
 	std::list<avm_instruct>							_instructionList;
 	instruction_parser<std::string::iterator>		_grammar;
 	int												_lineCount;
+	boost::spirit::qi::rule<std::string::iterator, std::string(), boost::spirit::ascii::space_type> _commentString;
+	boost::spirit::qi::rule<std::string::iterator, std::string(), boost::spirit::ascii::space_type> _errorStringWithValue;
+
 
 	/** PRIVATE FUNCTION **/
-	void			_checkFailedInstruction( std::string instruction ); //a faire
+	void			_checkFailedInstruction( std::string instruction );
+	void			_initRules( void );
+	// void			_printDebug(avm_instruct instructDebug);
 
 public:
 	/** CANONICAL **/
 	Parser();
 	Parser( const Parser & src );
-	// Parser( int fd );
 	Parser( std::ifstream* streamIn );
-	// Parser( std::string filename );
 	~Parser();
 
 	Parser &		operator=( const Parser & src );
@@ -160,12 +143,7 @@ public:
 	class ParsingException : public std::exception
 	{
 		public :
-			// ParsingException( void ) throw();
-			// ParsingException( GradeTooHighException const & src ) throw();
-			// ~ParsingException( void ) throw();
 			virtual const char* what() const throw();
-		// private :
-		// 	ParsingException &operator=( ParsingException const & src );
 	};
 };
 

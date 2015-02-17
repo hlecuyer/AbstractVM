@@ -6,21 +6,32 @@
 
 void			Parser::_checkFailedInstruction( std::string instruction )
 {
-	// std::cout << "CheckFailedInstruction : " << instruction << std::endl; //DEBUG
-	if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_], boost::spirit::ascii::space))
+	if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), this->_commentString, boost::spirit::ascii::space))
 	{
-		// std::cout << "return comment or empty line" << std::endl;
 		return ;
 	}
 	else
 	{
-		if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), instructions >> boost::spirit::qi::lexeme[values] >> '(' >> boost::spirit::qi::double_ >> ')' >> -(boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_]) >> boost::spirit::qi::eoi, boost::spirit::ascii::space))
+		if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), this->_errorStringWithValue, boost::spirit::ascii::space))
 			std::cout << "AbstractVM: value after token with no required value" << std::endl;
 		std::cout << "AbstractVM: error line " << this->_lineCount << " : " << instruction << std::endl;
 		throw Parser::ParsingException();
 	}
-		// throw std::exception();
 }
+
+void			Parser::_initRules( void )
+{
+	this->_commentString = boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_];
+	this->_errorStringWithValue = boost::spirit::qi::lexeme[instructions] >> boost::spirit::qi::lexeme[values] >> '(' >> boost::spirit::qi::double_ >> ')' >> -(boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_]) >> boost::spirit::qi::eoi;
+}
+
+// void			Parser::_printDebug(avm_instruct instructDebug)
+// {
+// 	std::cout << instructDebug.name;
+// 	if (instructDebug.instrType.type != "")
+// 		std::cout << " [" << instructDebug.instrType.type << "] [" << instructDebug.instrType.value << "]";
+// 	std::cout << std::endl;
+// }
 
 
 // ** CANONICAL ** //
@@ -28,36 +39,24 @@ void			Parser::_checkFailedInstruction( std::string instruction )
 Parser::Parser( void ) : _lineCount(0)
 {
 	this->_fd = &(std::cin);
+	this->_initRules();
 }
 
 Parser::Parser( const Parser & src ) : _lineCount(0)
 {
 	*this = src;
+	this->_initRules();
 }
-
-// Parser::Parser( int fd ) : _fd(fd)
-// {}
 
 Parser::Parser( std::ifstream* streamIn ) : _lineCount(0)
 {
 	this->_fd = streamIn;
+	this->_initRules();
 }
-
-// Parser::Parser( std::string filename )
-// {
-// 	this->_tempFd.open(filename, std::ifstream::in);
-// 	this->_fd = &(this->_tempFd);
-// 	if ((this->_fd)->is_open())
-// 		throw Parser::ParsingException();
-// 	// this->_fd = new std::ifstream(filename);
-// 	// if (!static_cast<std::ifstream*>(this->_fd)->is_open())
-// 	// 	throw Parser::ParsingException();
-// }
 
 Parser::~Parser()
 {
-//	if (fd != std::cin)
-//		this->_fd.close();
+	return ;
 }
 
 Parser &					Parser::operator=( const Parser & src )
@@ -72,20 +71,18 @@ void						Parser::parseFile( void )
 {
 	std::string			line;
 	bool				ret;
-	// instruction_parser<std::string::iterator>		grammar;
 
 	while (std::getline(*this->_fd, line))
 	{
 		this->_lineCount++;
-		std::cout << "Getline : " << line << std::endl; //DEBUG
-		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))
-			return ;
-		// ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), grammar, boost::spirit::ascii::space, this->_instructionList);
+		// std::cout << "Getline : " << line << std::endl; //DEBUG
 		if (line == "")
 			continue ;
+		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))
+			return ;
 		ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), this->_grammar, boost::spirit::ascii::space, this->_instructionList);
 		if (!ret)
-			this->_checkFailedInstruction(line); //a faire
+			this->_checkFailedInstruction(line);
 	}
 }
 
@@ -95,15 +92,15 @@ std::list<avm_instruct>		Parser::getInstructionList( void ) const
 	return ( this->_instructionList );
 }
 
-// int							Parser::getFd( void )
-// {
-// 	return (this->_fd);
-// }
-
 std::istream*				Parser::getFd( void ) const
 {
 	return (this->_fd);
 }
+
+// void						Parser::dumpDebug( void )
+// {
+// 	for_each(this->_instructionList.begin(), this->_instructionList.end(), &Parser::_printDebug);
+// }
 
 const char*					Parser::ParsingException::what() const throw()
 {
