@@ -11,6 +11,7 @@
 // ************************************************************************** //
 
 #include "parser.hpp"
+#include "VirtualMachine.hpp"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -30,6 +31,7 @@ int main(int argc, char **argv)
     Parser              parser;
     std::ifstream       stream;
     std::list<avm_instruct> test;
+	VirtualMachine				VM;
 
     if (argc == 1)
 	{
@@ -63,6 +65,12 @@ int main(int argc, char **argv)
 			std::cout << "****" << std::endl << "START RETURN DEBUG :" << std::endl;
             for_each(test.begin(), test.end(), print_som);
 			std::cout << "****" << std::endl;
+			std::cout << "===============================" << std::endl;
+			std::cout << "START EXEC" << std::endl;
+
+			VM.addInstructions(parser.getInstructionList());
+			VM.execute();
+			std::cout << "===============================" << std::endl;
             // printf("la \n");
             // parser[i - 1] = Parser(argv[i]);
             //process.execute(parser[i - 1].parseFile());

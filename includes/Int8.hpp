@@ -1,17 +1,28 @@
 
+#ifndef INT8_HPP
+# define INT8_HPP
+
+#include <boost/lexical_cast.hpp>
+#include "eOperandType.hpp"
+#include "IOperand.hpp"
+
 class Int8 : IOperand
 {
 
 private:
 	char			_value;
-	int				_precision;
-	std::string 	_type;
+//	const int		_precision;
+	eOperandType 	_type;
+	std::string		_strValue;
+
+	Int8();
 
 public:
-	Int8();
-	Int8(Int8 & const);
-	Int8& operator=(Int8 const &);
+	Int8(std::string value);
+	Int8(const Int8 & );
+	Int8& operator=(const Int8 &);
 	~Int8();
+
 	int getPrecision( void ) const;
 	eOperandType getType( void ) const;
 	IOperand const * operator+( IOperand const & rhs ) const;
@@ -20,6 +31,9 @@ public:
 	IOperand const * operator/( IOperand const & rhs ) const;
 	IOperand const * operator%( IOperand const & rhs ) const;
 	std::string const & toString( void ) const;
-	~IOperand( void ) {}
-	
+	// ~IOperand( void ) {}
+
 };
+
+
+#endif // ** INT8_HPP ** //

@@ -24,7 +24,7 @@ class VmStack : public std::stack<T>
 
 	public:
 	VmStack(void) {}
-		~VmStack(void) {}
+	~VmStack(void) {}
 	VmStack(VmStack const & o): base(o) {}
 
 	typedef typename base::container_type::iterator	iterator;

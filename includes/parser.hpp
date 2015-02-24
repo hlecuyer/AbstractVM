@@ -11,6 +11,7 @@
 struct				instr_type
 {
 	std::string		type;
+	// std::string			value;
 	double			value;
 };
 
@@ -67,6 +68,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     instr_type,
     (std::string, type)
+    // (std::string, value)
     (double, value)
 )
 
@@ -80,11 +82,13 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
             instruction_string %= boost::spirit::qi::lexeme[instructions];
             type_string %= boost::spirit::qi::lexeme[values];
 			comment_string %= boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_];
+			// value_string %= boost::spirit::qi::digit >> -(boost::spirit::qi::string(".") >> +boost::spirit::qi::digit);
 
             start %=
 				instruction_string [boost::phoenix::ref(rf) = boost::spirit::qi::_1]
 				>> -((boost::spirit::qi::eps(boost::phoenix::ref(rf) == "assert") | boost::spirit::qi::eps(boost::phoenix::ref(rf) == "push"))
 					 > type_string > '('
+					 // > value_string > ')'
 					 > boost::spirit::qi::double_ > ')'
 				)
 				>> -comment_string
@@ -103,6 +107,7 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> instruction_string;
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> type_string;
 	boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> comment_string;
+	// boost::spirit::qi::rule<Iterator, std::string(), boost::spirit::ascii::space_type> value_string;
 	boost::spirit::qi::rule<Iterator, avm_instruct(), boost::spirit::ascii::space_type> start;
 };
 
@@ -136,7 +141,7 @@ public:
 	/** PUBLIC FUNCTION **/
 	void						parseFile();
 
-	std::list<avm_instruct>		getInstructionList( void ) const;
+	std::list<avm_instruct>	&	getInstructionList( void ) const;
 	std::istream*				getFd( void ) const;
 	// void						dumpDebug( void ); // a faire
 

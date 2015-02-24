@@ -87,7 +87,7 @@ void						Parser::parseFile( void )
 }
 
 
-std::list<avm_instruct>		Parser::getInstructionList( void ) const
+std::list<avm_instruct> &		Parser::getInstructionList( void ) const
 {
 	return ( this->_instructionList );
 }

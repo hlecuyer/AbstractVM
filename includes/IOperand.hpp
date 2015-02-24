@@ -1,10 +1,8 @@
-enum class eOperandType {
-     int8,
-     int16,
-     int32,
-     floatt,
-     doublee
-};
+
+#ifndef IOPERAND_HPP
+# define IOPERAND_HPP
+
+#include "eOperandType.hpp"
 
 class IOperand {
 public:
@@ -18,3 +16,5 @@ public:
 	virtual std::string const & toString( void ) const = 0; // String representation of the instance
 	virtual ~IOperand( void ) {}
 };
+
+#endif // ** IOPERAND_HPP ** //
