@@ -6,7 +6,7 @@
 #include "eOperandType.hpp"
 #include "IOperand.hpp"
 
-class Int16 : IOperand
+class Int16 : public IOperand
 {
 
 private:

@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     Parser              parser;
     std::ifstream       stream;
     std::list<avm_instruct> test;
-	VirtualMachine				VM;
+	// VirtualMachine				VM;
 
     if (argc == 1)
 	{
@@ -68,7 +68,8 @@ int main(int argc, char **argv)
 			std::cout << "===============================" << std::endl;
 			std::cout << "START EXEC" << std::endl;
 
-			VM.addInstructions(parser.getInstructionList());
+			VirtualMachine				VM(parser.getInstructionList());
+			// VM.addInstructions(parser.getInstructionList());
 			VM.execute();
 			std::cout << "===============================" << std::endl;
             // printf("la \n");

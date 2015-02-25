@@ -141,7 +141,7 @@ public:
 	/** PUBLIC FUNCTION **/
 	void						parseFile();
 
-	std::list<avm_instruct>	&	getInstructionList( void ) const;
+	const std::list<avm_instruct>	&	getInstructionList( void ) const;
 	std::istream*				getFd( void ) const;
 	// void						dumpDebug( void ); // a faire
 
