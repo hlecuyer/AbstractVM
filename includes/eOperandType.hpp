@@ -2,7 +2,7 @@
 #ifndef EOPERANDTYPE
 # define EOPERANDTYPE
 
-enum class eOperandType {
+enum  eOperandType {
      int8,
      int16,
      int32,

@@ -6,7 +6,7 @@
 //   By: hlecuyer <hlecuyer@student.42.fr>          +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/02/10 12:25:28 by hlecuyer          #+#    #+#             //
-//   Updated: 2015/02/10 12:25:30 by hlecuyer         ###   ########.fr       //
+//   Updated: 2015/02/25 12:16:43 by hlecuyer         ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -43,6 +43,7 @@ int main(int argc, char **argv)
         // for (int i = 1; i < argc; i++)
         // {
             // printf("la \n");
+			std::cout << "la" << std::endl;
 			stream.open(argv[1]);
             // printf("la \n");
 			try
@@ -53,7 +54,7 @@ int main(int argc, char **argv)
 			}
 			catch (Parser::ParsingException & e)
 			{
-				std::cout << e.what() << std::endl;
+				std::cout << e.what() << " <= debug" << std::endl;
 				std::exit(-1);
 			}
 			// std::cout << "****" << std::endl << "START PARSER DEBUG :" << std::endl;
@@ -62,6 +63,7 @@ int main(int argc, char **argv)
             // printf("la \n");
             test = parser.getInstructionList();
             // printf("la \n");
+
 			std::cout << "****" << std::endl << "START RETURN DEBUG :" << std::endl;
             for_each(test.begin(), test.end(), print_som);
 			std::cout << "****" << std::endl;

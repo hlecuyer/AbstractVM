@@ -1,27 +1,27 @@
 
-#ifndef INT16_HPP
-# define INT16_HPP
+#ifndef FLOAT_HPP
+# define FLOAT_HPP
 
 #include <boost/lexical_cast.hpp>
 #include "eOperandType.hpp"
 #include "IOperand.hpp"
 
-class Int16 : public IOperand
+class Float : public IOperand
 {
 
 private:
-	short				_value;
+	float				_value;
 	// int				_precision;
 	eOperandType 	_type;
 	std::string		_strValue;
 
-	Int16();
+	Float();
 
 public:
-	Int16(std::string value);
-	Int16( const Int16 & src);
-	Int16& operator=(const Int16 & src);
-	~Int16();
+	Float(std::string value);
+	Float( const Float & src);
+	Float& operator=(const Float & src);
+	~Float();
 
 	int getPrecision( void ) const;
 	eOperandType getType( void ) const;
@@ -35,4 +35,4 @@ public:
 
 };
 
-#endif // ** INT16_HPP ** //
+#endif // ** FLOAT_HPP ** //

@@ -44,30 +44,51 @@ eOperandType Int16::getType( void ) const
 
 IOperand const * Int16::operator+( IOperand const & rhs ) const
 {
+	if (this != &rhs){
 
+	}
+	IOperand *ret = new Int16(*this);
+	return ret;
 }
 
 IOperand const * Int16::operator-( IOperand const & rhs ) const
 {
+	if (this != &rhs){
 
+	}
+	IOperand *ret = new Int16(*this);
+	return ret;
 }
 
 IOperand const * Int16::operator*( IOperand const & rhs ) const
 {
+	if (this != &rhs){
 
+	}
+	IOperand *ret = new Int16(*this);
+	return ret;
 }
 
 IOperand const * Int16::operator/( IOperand const & rhs ) const
 {
+	if (this != &rhs){
 
+	}
+	IOperand *ret = new Int16(*this);
+	return ret;
 }
 
 IOperand const * Int16::operator%( IOperand const & rhs ) const
 {
+	if (this != &rhs){
 
+	}
+	IOperand *ret = new Int16(*this);
+	return ret;
 }
 
 std::string const & Int16::toString( void ) const
 {
+	std::cout << "je suis Int16" << std::endl;
 	return this->_strValue;
 }

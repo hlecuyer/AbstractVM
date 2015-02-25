@@ -44,30 +44,54 @@ eOperandType Int8::getType( void ) const
 
 IOperand const * Int8::operator+( IOperand const & rhs ) const
 {
+	if (this != &rhs){
 
+	}
+	IOperand *ret = new Int8(*this);
+	return ret;
 }
 
 IOperand const * Int8::operator-( IOperand const & rhs ) const
 {
+	if (this != &rhs){
 
+	}
+	IOperand *ret = new Int8(*this);
+	return ret;
 }
 
 IOperand const * Int8::operator*( IOperand const & rhs ) const
 {
+	if (this != &rhs){
+
+	}
+	IOperand *ret = new Int8(*this);
+	return ret;
 
 }
 
 IOperand const * Int8::operator/( IOperand const & rhs ) const
 {
+	if (this != &rhs){
+
+	}
+	IOperand *ret = new Int8(*this);
+	return ret;
 
 }
 
 IOperand const * Int8::operator%( IOperand const & rhs ) const
 {
+	if (this != &rhs){
+
+	}
+	IOperand *ret = new Int8(*this);
+	return ret;
 
 }
 
 std::string const & Int8::toString( void ) const
 {
+	std::cout << "je suis int8" << std::endl;
 	return this->_strValue;
 }
