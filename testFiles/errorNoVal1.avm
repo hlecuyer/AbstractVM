@@ -2,7 +2,7 @@
 ; errorNoVal1 -
 ; -------------
 
-push int32(42)
+push int32(42) ; -32768 a 32 767
 push int32(33)
 
 add

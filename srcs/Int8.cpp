@@ -2,25 +2,24 @@
 
 Int8::Int8(std::string value) : _strValue(value)
 {
-	int checkVal;
-
 	try
 	{
-		checkVal = boost::lexical_cast<int>(value);
+		this->_value = boost::numeric_cast<int8_t>(boost::lexical_cast<int>(value));
 	}
-	catch ( boost::bad_lexical_cast const& )
+	catch ( boost::numeric::positive_overflow & e)
 	{
-
-		std::cout << "AbstractVM: bad cast" << std::endl;
+		std::cout << "AbstractVM: int8: " << e.what() << std::endl;
+		std::exit(-1);
 	}
-	try
+	catch ( boost::numeric::negative_overflow & e)
 	{
-		validateVal(checkVal);
-		this->_value = static_cast<signed char>(checkVal);
+		std::cout << "AbstractVM: int8: " << e.what() << std::endl;
+		std::exit(-1);
 	}
-	catch (std::overflow_error e)
+	catch ( boost::bad_lexical_cast const & e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << "AbstractVM: int8: " << e.what() <<  std::endl;
+		std::exit(-1);
 	}
 	this->_type = eOperandType::int8;
 }
@@ -30,7 +29,7 @@ Int8::Int8(const Int8 & src)
 	*this = src;
 }
 
-Int8& Int8::operator=(const Int8 & src)
+Int8& Int8::operator=(Int8 const & src)
 {
 	if (this != &src)
 	{
@@ -104,16 +103,16 @@ IOperand const * Int8::operator%( IOperand const & rhs ) const
 
 std::string const & Int8::toString( void ) const
 {
-	std::cout << "je suis int8 : " << static_cast<int>(this->_value)  << std::endl;
+	// std::cout << "je suis int8 : " << static_cast<int>(this->_value)  << std::endl;
 	return this->_strValue;
 }
 
-void	 Int8::validateVal(int const & val) const
-{
-	if (!val)
-		throw new std::domain_error("Int8");
-	else if (val < -128)
-		throw new std::underflow_error("Int8");
-	else if (val > 127)
-		throw new std::overflow_error("Int8");
-}
+// void	 Int8::validateVal(int const & val) const
+// {
+// 	if (!val)
+// 		throw new std::domain_error("Int8");
+// 	else if (val < -128)
+// 		throw new std::underflow_error("Int8");
+// 	else if (val > 127)
+// 		throw new std::overflow_error("Int8");
+// }

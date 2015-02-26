@@ -4,11 +4,12 @@ Float::Float(std::string value) : _strValue(value)
 {
 	try
 	{
-		this->_value = std::stof(value);
+		this->_value = boost::lexical_cast<float>(value);//std::stof(value);
 	}
-	catch ( boost::bad_lexical_cast const& )
+	catch ( boost::bad_lexical_cast const & e)
 	{
-		std::cout << "AbstractVM: bad cast" << std::endl;
+		std::cout << "AbstractVM: float: " << e.what() << std::endl;
+		exit(-1);
 	}
 	this->_type = eOperandType::floatt;
 }
@@ -89,6 +90,6 @@ IOperand const * Float::operator%( IOperand const & rhs ) const
 
 std::string const & Float::toString( void ) const
 {
-	std::cout << "je suis float" << std::endl;
+	// std::cout << "je suis float" << std::endl;
 	return this->_strValue;
 }

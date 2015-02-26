@@ -3,6 +3,7 @@
 # define INT8_HPP
 
 #include <boost/lexical_cast.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <stdexcept>
 #include "eOperandType.hpp"
 #include "IOperand.hpp"
@@ -21,7 +22,7 @@ private:
 public:
 	Int8(std::string value);
 	Int8(const Int8 & );
-	Int8& operator=(const Int8 &);
+	Int8& operator=(Int8 const &);
 	~Int8();
 
 	int getPrecision( void ) const;

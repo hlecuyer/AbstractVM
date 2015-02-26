@@ -4,12 +4,27 @@ Int32::Int32(std::string value) : _strValue(value)
 {
 	try
 	{
-		this->_value = boost::lexical_cast<int>(value);;
+		this->_value = boost::numeric_cast<int32_t>(boost::lexical_cast<long>(value));
 	}
-	catch ( boost::bad_lexical_cast const& )
+	catch ( boost::numeric::positive_overflow & e)
 	{
-		std::cout << "AbstractVM: bad cast" << std::endl;
+		std::cout << "AbstractVM: int32: " << e.what() << std::endl;
+		std::exit(-1);
 	}
+	catch ( boost::numeric::negative_overflow & e)
+	{
+		std::cout << "AbstractVM: int32: " << e.what() << std::endl;
+		std::exit(-1);
+	}
+	catch ( boost::bad_lexical_cast const & e)
+	{
+		std::cout << "AbstractVM: int32: " << e.what() <<  std::endl;
+		exit(-1);
+	}
+	// try
+	// {
+	// 	this->_value = boost::lexical_cast<int>(value);;
+	// }
 	this->_type = eOperandType::int32;
 }
 
@@ -89,6 +104,6 @@ IOperand const * Int32::operator%( IOperand const & rhs ) const
 
 std::string const & Int32::toString( void ) const
 {
-	std::cout << "je suis int32" << std::endl;
+	// std::cout << "je suis int32" << std::endl;
 	return this->_strValue;
 }

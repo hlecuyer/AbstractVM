@@ -4,13 +4,12 @@ Double::Double(std::string value) : _strValue(value)
 {
 	try
 	{
-		this->_value = std::stod(value);
-		std::cout << "_strvalue = "<< this->_value << std::endl;
-		std::cout << "_value = "<< this->_value << std::endl;
+		this->_value = boost::lexical_cast<double>(value);
 	}
-	catch ( boost::bad_lexical_cast const& )
+	catch ( boost::bad_lexical_cast const & e)
 	{
-		std::cout << "AbstractVM: bad cast" << std::endl;
+		std::cout << "AbstractVM: double: " << e.what() << std::endl;
+		exit(-1);
 	}
 	this->_type = eOperandType::doublee;
 }
@@ -91,6 +90,6 @@ IOperand const * Double::operator%( IOperand const & rhs ) const
 
 std::string const & Double::toString( void ) const
 {
-	std::cout << "je suis double" << std::endl;
+	// std::cout << "je suis double" << std::endl;
 	return this->_strValue;
 }

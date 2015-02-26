@@ -1,0 +1,7 @@
+
+push int32(500)
+push int16(400)
+push int8(24)
+dump
+pop
+dump

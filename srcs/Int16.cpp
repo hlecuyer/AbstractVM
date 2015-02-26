@@ -4,12 +4,31 @@ Int16::Int16(std::string value) : _strValue(value)
 {
 	try
 	{
-		this->_value = static_cast<signed short int>(boost::lexical_cast<int>(value));
+		this->_value = boost::numeric_cast<int16_t>(boost::lexical_cast<int>(value));
 	}
-	catch ( boost::bad_lexical_cast const& )
+	catch ( boost::numeric::positive_overflow & e)
 	{
-		std::cout << "AbstractVM: bad cast" << std::endl;
+		std::cout << "AbstractVM: int16: " << e.what() << std::endl;
+		std::exit(-1);
 	}
+	catch ( boost::numeric::negative_overflow & e)
+	{
+		std::cout << "AbstractVM: int16: " << e.what() << std::endl;
+		std::exit(-1);
+	}
+	catch ( boost::bad_lexical_cast const & e)
+	{
+		std::cout << "AbstractVM: int16: " << e.what() <<  std::endl;
+		std::exit(-1);
+	}
+	// try
+	// {
+	// 	this->_value = static_cast<signed short int>(boost::lexical_cast<int>(value));
+	// }
+	// catch ( boost::bad_lexical_cast const& )
+	// {
+	// 	std::cout << "AbstractVM: bad cast" << std::endl;
+	// }
 	this->_type = eOperandType::int16;
 }
 
@@ -89,6 +108,6 @@ IOperand const * Int16::operator%( IOperand const & rhs ) const
 
 std::string const & Int16::toString( void ) const
 {
-	std::cout << "je suis Int16 : " << this->_value  << std::endl;
+	// std::cout << "je suis Int16 : " << this->_value  << std::endl;
 	return this->_strValue;
 }

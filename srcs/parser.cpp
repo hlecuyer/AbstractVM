@@ -75,7 +75,7 @@ void						Parser::parseFile( void )
 	while (std::getline(*this->_fd, line))
 	{
 		this->_lineCount++;
-		// std::cout << "Getline : " << line << std::endl; //DEBUG
+		std::cout << "Getline : " << line << std::endl; //DEBUG
 		if (line == "")
 			continue ;
 		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))

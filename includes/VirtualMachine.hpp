@@ -33,8 +33,11 @@ private:
 //	 std::map<eOperandType, IOperandFunctionPtr>			_functionFactory;
 
 	typedef IOperand const * (VirtualMachine::*IOperandFunctionPtr)(std::string const & value) const;
+	typedef void  (VirtualMachine::*instructionFunctionPtr)(instr_type const &);
+
 	std::map<std::string, eOperandType>					_typeMap;
 	static const IOperandFunctionPtr 					_functionFactory[];
+	std::map<std::string, instructionFunctionPtr>		_functionInstruction;
 
 	VirtualMachine();
 	VirtualMachine& operator=(VirtualMachine const &);
@@ -51,6 +54,12 @@ public:
 	IOperand const * createInt32( std::string const & value ) const;
 	IOperand const * createFloat( std::string const & value ) const;
 	IOperand const * createDouble( std::string const & value ) const;
+
+	void pushVM( instr_type const & instruction );
+	void assertVM( instr_type const & instruction );
+	void popVM( instr_type const & instruction );
+	void dumpVM( instr_type const & instruction );
+	void addVM( instr_type const & instruction );
 
 };
 

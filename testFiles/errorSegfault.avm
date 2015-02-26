@@ -1,0 +1,5 @@
+push int16(42) ; -32768 à 32 767
+push int8(127); over flow >127 underflow < -128
+push int32(5464654); de -2 147 483 648 à 2 147 483 647
+push float(25.23); de 1.2e-308 à 3.4e-38
+push double(8.646468778);
