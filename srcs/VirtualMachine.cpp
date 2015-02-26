@@ -64,7 +64,7 @@ void	VirtualMachine::execute()
 			found = this->_typeMap.find(it->instrType.type);
 			if (found != this->_typeMap.end())
 			{
-				this->_stack.push(this->createOperand(found->second, boost::lexical_cast<std::string>(it->instrType.value)));
+				this->_stack.push(this->createOperand(found->second, it->instrType.value));
 				// this->_stack.push(this->createOperand(this->_typeMap[it->instrType.type], boost::lexical_cast<std::string>(it->instrType.value)));
 				std::cout << "Operand Created : " << it->instrType.type << std::endl;
 			}

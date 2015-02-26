@@ -1,10 +1,12 @@
 #include "Double.hpp"
 
-Double::Double(std::string value)
+Double::Double(std::string value) : _strValue(value)
 {
 	try
 	{
-		this->_value = boost::lexical_cast<double>(value);
+		this->_value = std::stod(value);
+		std::cout << "_strvalue = "<< this->_value << std::endl;
+		std::cout << "_value = "<< this->_value << std::endl;
 	}
 	catch ( boost::bad_lexical_cast const& )
 	{

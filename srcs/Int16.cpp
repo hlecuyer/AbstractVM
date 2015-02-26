@@ -1,10 +1,10 @@
 #include "Int16.hpp"
 
-Int16::Int16(std::string value)
+Int16::Int16(std::string value) : _strValue(value)
 {
 	try
 	{
-		this->_value = boost::lexical_cast<short>(value);
+		this->_value = static_cast<signed short int>(boost::lexical_cast<int>(value));
 	}
 	catch ( boost::bad_lexical_cast const& )
 	{
@@ -89,6 +89,6 @@ IOperand const * Int16::operator%( IOperand const & rhs ) const
 
 std::string const & Int16::toString( void ) const
 {
-	std::cout << "je suis Int16" << std::endl;
+	std::cout << "je suis Int16 : " << this->_value  << std::endl;
 	return this->_strValue;
 }

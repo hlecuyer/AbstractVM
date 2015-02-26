@@ -3,6 +3,7 @@
 # define INT8_HPP
 
 #include <boost/lexical_cast.hpp>
+#include <stdexcept>
 #include "eOperandType.hpp"
 #include "IOperand.hpp"
 
@@ -31,6 +32,7 @@ public:
 	IOperand const * operator/( IOperand const & rhs ) const;
 	IOperand const * operator%( IOperand const & rhs ) const;
 	std::string const & toString( void ) const;
+	void validateVal(int const & val) const;
 	// ~IOperand( void ) {}
 
 };

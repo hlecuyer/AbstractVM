@@ -17,7 +17,13 @@ CFLAGS				=		-std=c++1y -g3 -Wall -Wextra -Werror -c \
 LFLAGS				=		-o
 
 SRC					=		main.cpp		\
-							parser.cpp
+							parser.cpp		\
+							VirtualMachine.cpp \
+							Int8.cpp			\
+							Int32.cpp			\
+							Float.cpp			\
+							Double.cpp			\
+							Int16.cpp
 
 OBJ					=		$(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.cpp=.o)))
 

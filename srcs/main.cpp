@@ -43,7 +43,6 @@ int main(int argc, char **argv)
         // for (int i = 1; i < argc; i++)
         // {
             // printf("la \n");
-			std::cout << "la" << std::endl;
 			stream.open(argv[1]);
             // printf("la \n");
 			try

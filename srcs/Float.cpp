@@ -1,10 +1,10 @@
 #include "Float.hpp"
 
-Float::Float(std::string value)
+Float::Float(std::string value) : _strValue(value)
 {
 	try
 	{
-		this->_value = boost::lexical_cast<float>(value);
+		this->_value = std::stof(value);
 	}
 	catch ( boost::bad_lexical_cast const& )
 	{

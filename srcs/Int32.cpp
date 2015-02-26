@@ -1,10 +1,10 @@
 #include "Int32.hpp"
 
-Int32::Int32(std::string value)
+Int32::Int32(std::string value) : _strValue(value)
 {
 	try
 	{
-		this->_value = boost::lexical_cast<int>(value);
+		this->_value = boost::lexical_cast<int>(value);;
 	}
 	catch ( boost::bad_lexical_cast const& )
 	{
