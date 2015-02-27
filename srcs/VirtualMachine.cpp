@@ -5,6 +5,9 @@
 #include "Int32.hpp"
 #include "Float.hpp"
 #include "Double.hpp"
+#include "TOperand.hpp"
+
+class TOperand;
 
 VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _instruct(instruct)
 // VirtualMachine::VirtualMachine( void )// : _instruct(instruct)
@@ -120,31 +123,36 @@ IOperand const * VirtualMachine::createOperand( eOperandType type, std::string c
 
 IOperand const * VirtualMachine::createInt8( std::string const & value ) const
 {
-	Int8 *		newValue = new Int8(value);
+	// Int8 *		newValue = new Int8(value);
+	TOperand<int8_t> *		newValue = new TOperand<int8_t>(value);
 	return newValue;
 }
 
 IOperand const * VirtualMachine::createInt16( std::string const & value ) const
 {
-	Int16 *		newValue = new Int16(value);
+	// Int16 *		newValue = new Int16(value);
+	TOperand<int16_t> *		newValue = new TOperand<int16_t>(value);
 	return newValue;
 }
 
 IOperand const * VirtualMachine::createInt32( std::string const & value ) const
 {
-	Int32 *		newValue = new Int32(value);
+	// Int32 *		newValue = new Int32(value);
+	TOperand<int32_t> *		newValue = new TOperand<int32_t>(value);
 	return newValue;
 }
 
 IOperand const * VirtualMachine::createFloat( std::string const & value ) const
 {
-	Float *		newValue = new Float(value);
+	// Float *		newValue = new Float(value);
+	TOperand<float> *		newValue = new TOperand<float>(value);
 	return newValue;
 }
 
 IOperand const * VirtualMachine::createDouble( std::string const & value ) const
 {
-	Double *		newValue = new Double(value);
+	// Double *		newValue = new Double(value);
+	TOperand<double> *		newValue = new TOperand<double>(value);
 	return newValue;
 }
 
@@ -191,6 +199,9 @@ void VirtualMachine::dumpVM(instr_type const & instruction)
 
 void VirtualMachine::addVM(instr_type const & instruction)
 {
+	// (void)instruction;
+	std::cout << "ici fonction add de la VM " << std::endl;
+	/* OK ici ! */
 	IOperand const * tmp1;
 	IOperand const * tmp2;
 	IOperand const * result;
@@ -201,8 +212,10 @@ void VirtualMachine::addVM(instr_type const & instruction)
 		std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
 		exit(-1);
 	}
-	tmp1 = this->_stack.pop();
-	tmp2 = this->_stack.pop();
-	result = tmp1 + tmp2;
+	tmp1 = this->_stack.top();
+	this->_stack.pop();
+	tmp2 = this->_stack.top();
+	this->_stack.pop();
+	result = *tmp1 + *tmp2;
 	this->_stack.push(result);
 }

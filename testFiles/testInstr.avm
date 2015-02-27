@@ -4,4 +4,5 @@ push int16(400)
 push int8(24)
 dump
 pop
+add
 dump
