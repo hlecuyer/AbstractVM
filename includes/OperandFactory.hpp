@@ -3,10 +3,10 @@
 # define OPERANDFACTORY_HPP
 
 #include "IOperand.hpp"
-#include "TOperand.hpp"
+// #include "TOperand.hpp"
 
-template <typename T>
-class TOperand;
+// template <typename T>
+// class TOperand;
 
 class OperandFactory
 {

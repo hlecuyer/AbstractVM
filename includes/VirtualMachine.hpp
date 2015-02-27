@@ -8,8 +8,8 @@
 #include <boost/lexical_cast.hpp>
 #include "parser.hpp"
 #include "VmStack.hpp"
-#include "IOperand.hpp"
-#include "TOperand.hpp"
+// #include "IOperand.hpp"
+// #include "TOperand.hpp"
 #include "OperandFactory.hpp"
 
 #include "Int8.hpp"
@@ -68,6 +68,9 @@ public:
 	void popVM( instr_type const & instruction );
 	void dumpVM( instr_type const & instruction );
 	void addVM( instr_type const & instruction );
+	void subVM( instr_type const & instruction );
+	void exitVM( instr_type const & instruction );
+	void printVM( instr_type const & instruction );
 
 };
 

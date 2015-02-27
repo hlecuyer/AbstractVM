@@ -1,10 +1,11 @@
 
 #include "VirtualMachine.hpp"
-#include "Int8.hpp"
-#include "Int16.hpp"
-#include "Int32.hpp"
-#include "Float.hpp"
-#include "Double.hpp"
+#include "TOperand.hpp"
+// #include "Int8.hpp"
+// #include "Int16.hpp"
+// #include "Int32.hpp"
+// #include "Float.hpp"
+// #include "Double.hpp"
 
 
 VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _instruct(instruct)
@@ -23,6 +24,9 @@ VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _inst
 	this->_functionInstruction["assert"] = &VirtualMachine::assertVM;
 	this->_functionInstruction["dump"] = &VirtualMachine::dumpVM;
 	this->_functionInstruction["add"] = &VirtualMachine::addVM;
+	this->_functionInstruction["sub"] = &VirtualMachine::subVM;
+	this->_functionInstruction["exit"] = &VirtualMachine::exitVM;
+	this->_functionInstruction["print"] = &VirtualMachine::printVM;
 	// this->_functionInstruction["double"] = &VirtualMachine::doublee;
 
 //	this->_functionFactory[static_cast<int>(eOperandType::int8)] = &createInt8;
@@ -189,14 +193,26 @@ void VirtualMachine::popVM(instr_type const & instruction)
 
 void VirtualMachine::dumpVM(instr_type const & instruction)
 {
-	VmStack<IOperand const *>::iterator		sIt;
-	VmStack<IOperand const *>::iterator		sIte = this->_stack.end();
+	VmStack<IOperand const *>::iterator		sIt = this->_stack.begin();
+	VmStack<IOperand const *>::iterator		sIte;
 
 	static_cast<void>(instruction);
-	for (sIt = this->_stack.begin(); sIt != sIte; sIt++)
+	if (this->_stack.size() > 0)
 	{
-		std::cout << (*sIt)->toString() << std::endl;
+		for (sIte = --this->_stack.end(); sIte != sIt; sIte--)
+		{
+			std::cout << (*sIte)->toString() << std::endl;
+		}
+		std::cout << (*sIte)->toString() << std::endl;
 	}
+	// VmStack<IOperand const *>::iterator		sIt;
+	// VmStack<IOperand const *>::iterator		sIte = this->_stack.end();
+
+	// static_cast<void>(instruction);
+	// for (sIt = this->_stack.begin(); sIt != sIte; sIt++)
+	// {
+	// 	std::cout << (*sIt)->toString() << std::endl;
+	// }
 }
 
 void VirtualMachine::addVM(instr_type const & instruction)
@@ -220,4 +236,58 @@ void VirtualMachine::addVM(instr_type const & instruction)
 	this->_stack.pop();
 	result = *tmp1 + *tmp2;
 	this->_stack.push(result);
+}
+
+void VirtualMachine::subVM(instr_type const & instruction)
+{
+	// (void)instruction;
+	std::cout << "ici fonction sub de la VM " << std::endl;
+	/* OK ici ! */
+	IOperand const * v1;
+	IOperand const * v2;
+	IOperand const * result;
+
+	static_cast<void>(instruction);
+	if (this->_stack.size() < 2)
+	{
+		std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
+		exit(-1);
+	}
+	v1 = this->_stack.top();
+	this->_stack.pop();
+	v2 = this->_stack.top();
+	this->_stack.pop();
+	result = *v2 - *v1;
+	this->_stack.push(result);
+}
+
+void VirtualMachine::exitVM(instr_type const & instruction)
+{
+	static_cast<void>(instruction);
+	std::exit(-1);
+}
+
+void VirtualMachine::printVM(instr_type const & instruction)
+{
+	static_cast<void>(instruction);
+	if (this->_stack.size() < 1)
+	{
+		//mettre error !!
+		std::exit(-1);
+	}
+	else
+	{
+		if (this->_stack.top()->getPrecision() == 0)
+		{
+			TOperand<int8_t> const *		addr;
+
+			addr = reinterpret_cast<TOperand<int8_t> const *>(this->_stack.top());
+			std::cout << static_cast< const char>(addr->getValue()) << std::endl;
+		}
+		else
+		{
+			//mettre error !!
+			std::exit(-1);
+		}
+	}
 }

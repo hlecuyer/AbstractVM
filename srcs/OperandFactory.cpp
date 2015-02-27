@@ -1,5 +1,8 @@
 
 #include "OperandFactory.hpp"
+#include "TOperand.hpp"
+// template <typename T>
+// class TOperand;
 
 const OperandFactory::IOperandFunctionPtr OperandFactory::_functionFactory[] =
 {

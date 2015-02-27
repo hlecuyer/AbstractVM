@@ -9,10 +9,18 @@
 #include "eOperandType.hpp"
 #include "IOperand.hpp"
 #include "OperandFactory.hpp"
+
+enum operationType {
+	addOp,
+	subOp,
+	mulOp,
+	divOp,
+	modOp
+};
 // #include "VirtualMachine.hpp"
 
 // class VirtualMachine;
-class OperandFactory;
+// class OperandFactory;
 
 template <typename T>
 class TOperand : public IOperand
@@ -23,10 +31,36 @@ private:
 	std::string			_strValue;
 	OperandFactory		_operandFactory;
 
+	// template <typename Q>
+	// struct operatorWrapper {
+	// 	typedef Q (*operatorFunctionPtr)(Q a, Q b) const;
+	// };
+
+	// static const operatorWrapper::operatorFunctionPtr 					_operators[];
+
 	TOperand();
 	eOperandType		_findType( void );
 	template <typename C>
-	IOperand const *	_addOperand( IOperand const & rhs ) const;
+	// IOperand const *	_addOperand( IOperand const & rhs ) const;
+	IOperand const *	_addOperand( TOperand<C> const * rhs ) const;
+
+	template <typename C>
+	IOperand const *	_subOperand( TOperand<C> const * rhs ) const;
+
+	template <typename C>
+	IOperand const *	_mulOperand( TOperand<C> const * rhs ) const;
+
+	template <typename C>
+	IOperand const *	_genericOperand( TOperand<C> const * rhs, operationType operation ) const;
+
+	template <typename Q>
+	Q _operatorsSwitch(Q a, Q b, operationType operation) const;
+
+	template <typename Q>
+	Q addOp(Q a, Q b);
+
+	template <typename Q>
+	Q subOp(Q a, Q b);
 
 public:
 	TOperand(std::string value);
@@ -34,8 +68,9 @@ public:
 	TOperand& operator=(TOperand const &);
 	~TOperand();
 
-	int getPrecision( void ) const;
-	eOperandType getType( void ) const;
+	int				getPrecision( void ) const;
+	T				getValue( void ) const;
+	eOperandType	getType( void ) const;
 	IOperand const * operator+( IOperand const & rhs ) const;
 	IOperand const * operator-( IOperand const & rhs ) const;
 	IOperand const * operator*( IOperand const & rhs ) const;
@@ -45,30 +80,170 @@ public:
 
 };
 
-template<typename T, typename C>
-IOperand const *	TOperand<T>::_addOperand( IOperand const & rhs ) const
+template <typename T>
+template <typename Q>
+Q _operatorsSwitch(Q a, Q b, operationType operation) const
 {
-	IOperand *		newOp;
+	switch (operation)
+	{
+	case operationType::addOp :
+		return this->addOp<Q>(a, b);
+		break ;
+	case operationType::subOp :
+		return this->subOp<Q>(a, b);
+		break ;
+	case operationType::mulOp :
+		// return this->addOp<Q>(a, b);
+		break ;
+	case operationType::divOp :
+		// return this->addOp<Q>(a, b);
+		break ;
+	case operationType::modOp :
+		// return this->addOp<Q>(a, b);
+		break ;
+	}
+	return 0;
+}
+
+// template <typname>
+// const operatorWrapper<Q>::operatorFunctionPtr TOperand<T>::_operators[] =
+// {
+// 	&TOperand::addOp,
+// 	&TOperand::subOp
+// };
+
+template <typename T>
+template <typename Q>
+Q TOperand<T>::addOp (Q a, Q b)
+{
+	return (a + b);
+}
+
+template <typename T>
+template <typename Q>
+Q TOperand<T>::subOp (Q a, Q b)
+{
+	return (a - b);
+}
+
+template <typename T>
+template <typename C>
+IOperand const *	TOperand<T>::_genericOperand( TOperand<C> const * rhs, operationType operation ) const
+{
 	std::string		ret;
 	eOperandType	type;
 
-	if (this->getPrecision() < rhs.getPrecision())
+	if (this->getPrecision() < rhs->getPrecision())
 	{
 		C		newVal;
 		C		result;
 
 		newVal = boost::numeric_cast<C>(this->_value);//VERIFIER EXCEPTION
-		result = newVal + rhs._value;
+		// result = newVal + rhs->getValue();
+		result = this->_operatorsSwitch<C> (newVal, rhs->getValue());
+		// result = (this->_operators[operation]<C>) (newVal, rhs->getValue());
 		ret = boost::lexical_cast<std::string>(result);
-		type = rhs.getType();
+		type = rhs->getType();
 	}
 	else
 	{
 		T		newVal;
 		T		result;
 
-		newVal = boost::numeric_cast<C>(rhs._value);//VERIFIER EXCEPTION
+		newVal = boost::numeric_cast<T>(rhs->getValue());//VERIFIER EXCEPTION
+		// result = this->_value + newVal;
+		result = this->_operatorsSwitch<T> (newVal, rhs->getValue());
+		// result = (this->_operators[operation]<T>) (this->_value, newVal);
+		ret = boost::lexical_cast<std::string>(result);
+		type = this->getType();
+	}
+	return (this->_operandFactory.createOperand(type, ret));
+}
+
+template <typename T>
+template <typename C>
+IOperand const *	TOperand<T>::_addOperand( TOperand<C> const * rhs ) const
+{
+	std::string		ret;
+	eOperandType	type;
+
+	if (this->getPrecision() < rhs->getPrecision())
+	{
+		C		newVal;
+		C		result;
+
+		newVal = boost::numeric_cast<C>(this->_value);//VERIFIER EXCEPTION
+		result = newVal + rhs->getValue();
+		ret = boost::lexical_cast<std::string>(result);
+		type = rhs->getType();
+	}
+	else
+	{
+		T		newVal;
+		T		result;
+
+		newVal = boost::numeric_cast<T>(rhs->getValue());//VERIFIER EXCEPTION
 		result = this->_value + newVal;
+		ret = boost::lexical_cast<std::string>(result);
+		type = this->getType();
+	}
+	return (this->_operandFactory.createOperand(type, ret));
+}
+
+template <typename T>
+template <typename C>
+IOperand const *	TOperand<T>::_subOperand( TOperand<C> const * rhs ) const
+{
+	std::string		ret;
+	eOperandType	type;
+
+	if (this->getPrecision() < rhs->getPrecision())
+	{
+		C		newVal;
+		C		result;
+
+		newVal = boost::numeric_cast<C>(this->_value);//VERIFIER EXCEPTION
+		result = newVal - rhs->getValue();
+		ret = boost::lexical_cast<std::string>(result);
+		type = rhs->getType();
+	}
+	else
+	{
+		T		newVal;
+		T		result;
+
+		newVal = boost::numeric_cast<T>(rhs->getValue());//VERIFIER EXCEPTION
+		result = this->_value - newVal;
+		ret = boost::lexical_cast<std::string>(result);
+		type = this->getType();
+	}
+	return (this->_operandFactory.createOperand(type, ret));
+}
+
+template <typename T>
+template <typename C>
+IOperand const *	TOperand<T>::_mulOperand( TOperand<C> const * rhs ) const
+{
+	std::string		ret;
+	eOperandType	type;
+
+	if (this->getPrecision() < rhs->getPrecision())
+	{
+		C		newVal;
+		C		result;
+
+		newVal = boost::numeric_cast<C>(this->_value);//VERIFIER EXCEPTION
+		result = newVal - rhs->getValue();
+		ret = boost::lexical_cast<std::string>(result);
+		type = rhs->getType();
+	}
+	else
+	{
+		T		newVal;
+		T		result;
+
+		newVal = boost::numeric_cast<T>(rhs->getValue());//VERIFIER EXCEPTION
+		result = this->_value - newVal;
 		ret = boost::lexical_cast<std::string>(result);
 		type = this->getType();
 	}
@@ -131,6 +306,12 @@ int			TOperand<T>::getPrecision( void ) const
 }
 
 template <typename T>
+T			TOperand<T>::getValue( void ) const
+{
+	return (this->_value);
+}
+
+template <typename T>
 eOperandType TOperand<T>::getType( void ) const
 {
 	return (this->_type);
@@ -148,42 +329,96 @@ IOperand const * TOperand<T>::operator+( IOperand const & rhs ) const
 	switch (rhs.getType())
 	{
 	case eOperandType::int8 :
-		this->_addOperand<int8_t>(rhs);
-	// case eOperandType::int8 : std::cout << "INT 8 !!!!!" << std::endl;
+		return (this->_genericOperand<int8_t>(reinterpret_cast< TOperand<int8_t> const * >(&rhs), operationType::addOp ));
 		break ;
 	case eOperandType::int16 :
-		this->_addOperand<int16_t>(rhs);
-	// case eOperandType::int16 : std::cout << "INT 16 !!!!!" << std::endl;
+		return (this->_genericOperand<int16_t>( reinterpret_cast< TOperand<int16_t> const * >(&rhs), operationType::addOp ));
 		break ;
 	case eOperandType::int32 :
-		this->_addOperand<int32_t>(rhs);
-	// case eOperandType::int32 : std::cout << "INT 32 !!!!!" << std::endl;
+		return (this->_genericOperand<int32_t>(  reinterpret_cast< TOperand<int32_t> const * >(&rhs), operationType::addOp ));
 		break ;
 	case eOperandType::floatt :
-		std::cout << "INT 32 !!!!!" << std::endl;
+		return (this->_genericOperand<float>(  reinterpret_cast< TOperand<float> const * >(&rhs), operationType::addOp ));
 		break ;
 	case eOperandType::doublee :
-		std::cout << "INT 32 !!!!!" << std::endl;
+		return (this->_genericOperand<double>(  reinterpret_cast< TOperand<double> const * >(&rhs), operationType::addOp ));
 		break ;
-	// default: std::cout "FAIL !!!!" << std::endl;
-	// 	break ;
 	}
 
-	(void)rhs;
 	return this;
 }
+// template <typename T>
+// IOperand const * TOperand<T>::operator+( IOperand const & rhs ) const
+// {
+// 	switch (rhs.getType())
+// 	{
+// 	case eOperandType::int8 :
+// 		return (this->_addOperand<int8_t>(reinterpret_cast< TOperand<int8_t> const * >(&rhs)));
+// 		break ;
+// 	case eOperandType::int16 :
+// 		return (this->_addOperand<int16_t>( reinterpret_cast< TOperand<int16_t> const * >(&rhs)));
+// 		break ;
+// 	case eOperandType::int32 :
+// 		return (this->_addOperand<int32_t>(  reinterpret_cast< TOperand<int32_t> const * >(&rhs)));
+// 		break ;
+// 	case eOperandType::floatt :
+// 		return (this->_addOperand<float>(  reinterpret_cast< TOperand<float> const * >(&rhs)));
+// 		break ;
+// 	case eOperandType::doublee :
+// 		return (this->_addOperand<double>(  reinterpret_cast< TOperand<double> const * >(&rhs)));
+// 		break ;
+// 	}
+
+// 	return this;
+// }
 
 template <typename T>
 IOperand const * TOperand<T>::operator-( IOperand const & rhs ) const
 {
-	(void)rhs;
+	switch (rhs.getType())
+	{
+	case eOperandType::int8 :
+		return (this->_subOperand<int8_t>(reinterpret_cast< TOperand<int8_t> const * >(&rhs)));
+		break ;
+	case eOperandType::int16 :
+		return (this->_subOperand<int16_t>( reinterpret_cast< TOperand<int16_t> const * >(&rhs)));
+		break ;
+	case eOperandType::int32 :
+		return (this->_subOperand<int32_t>(  reinterpret_cast< TOperand<int32_t> const * >(&rhs)));
+		break ;
+	case eOperandType::floatt :
+		return (this->_subOperand<float>(  reinterpret_cast< TOperand<float> const * >(&rhs)));
+		break ;
+	case eOperandType::doublee :
+		return (this->_subOperand<double>(  reinterpret_cast< TOperand<double> const * >(&rhs)));
+		break ;
+	}
+
 	return this;
 }
 
 template <typename T>
 IOperand const * TOperand<T>::operator*( IOperand const & rhs ) const
 {
-	(void)rhs;
+	switch (rhs.getType())
+	{
+	case eOperandType::int8 :
+		return (this->_mulOperand<int8_t>(reinterpret_cast< TOperand<int8_t> const * >(&rhs)));
+		break ;
+	case eOperandType::int16 :
+		return (this->_mulOperand<int16_t>( reinterpret_cast< TOperand<int16_t> const * >(&rhs)));
+		break ;
+	case eOperandType::int32 :
+		return (this->_mulOperand<int32_t>(  reinterpret_cast< TOperand<int32_t> const * >(&rhs)));
+		break ;
+	case eOperandType::floatt :
+		return (this->_mulOperand<float>(  reinterpret_cast< TOperand<float> const * >(&rhs)));
+		break ;
+	case eOperandType::doublee :
+		return (this->_mulOperand<double>(  reinterpret_cast< TOperand<double> const * >(&rhs)));
+		break ;
+	}
+
 	return this;
 }
 
