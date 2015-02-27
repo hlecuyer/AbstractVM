@@ -9,6 +9,9 @@
 #include "parser.hpp"
 #include "VmStack.hpp"
 #include "IOperand.hpp"
+#include "TOperand.hpp"
+#include "OperandFactory.hpp"
+
 #include "Int8.hpp"
 #include "Int16.hpp"
 
@@ -21,6 +24,8 @@
 // 			return static_cast<std::size_t>(t);
 // 		}
 // };
+
+// class OperandFactory;
 
 class VirtualMachine
 {
@@ -36,8 +41,11 @@ private:
 	typedef void  (VirtualMachine::*instructionFunctionPtr)(instr_type const &);
 
 	std::map<std::string, eOperandType>					_typeMap;
-	static const IOperandFunctionPtr 					_functionFactory[];
+	// static const IOperandFunctionPtr 					_functionFactory[];
 	std::map<std::string, instructionFunctionPtr>		_functionInstruction;
+
+	//ICI NEW
+	OperandFactory										_operandFactory;
 
 	VirtualMachine();
 	VirtualMachine& operator=(VirtualMachine const &);
@@ -48,12 +56,12 @@ public:
 	// void	print_som(avm_instruct test);
 	void	execute( void );
 	// void	addInstructions(std::list<avm_instruct> & instruct);
-	IOperand const * createOperand( eOperandType type, std::string const & value ) const;
-	IOperand const * createInt8( std::string const & value ) const;
-	IOperand const * createInt16( std::string const & value ) const;
-	IOperand const * createInt32( std::string const & value ) const;
-	IOperand const * createFloat( std::string const & value ) const;
-	IOperand const * createDouble( std::string const & value ) const;
+	// IOperand const * createOperand( eOperandType type, std::string const & value ) const;
+	// IOperand const * createInt8( std::string const & value ) const;
+	// IOperand const * createInt16( std::string const & value ) const;
+	// IOperand const * createInt32( std::string const & value ) const;
+	// IOperand const * createFloat( std::string const & value ) const;
+	// IOperand const * createDouble( std::string const & value ) const;
 
 	void pushVM( instr_type const & instruction );
 	void assertVM( instr_type const & instruction );

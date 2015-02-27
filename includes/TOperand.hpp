@@ -8,9 +8,11 @@
 #include <typeinfo>
 #include "eOperandType.hpp"
 #include "IOperand.hpp"
-#include "VirtualMachine.hpp"
+#include "OperandFactory.hpp"
+// #include "VirtualMachine.hpp"
 
-class VirtualMachine;
+// class VirtualMachine;
+class OperandFactory;
 
 template <typename T>
 class TOperand : public IOperand
@@ -19,6 +21,7 @@ private:
 	T					_value;
 	eOperandType 		_type;
 	std::string			_strValue;
+	OperandFactory		_operandFactory;
 
 	TOperand();
 	eOperandType		_findType( void );
@@ -69,7 +72,7 @@ IOperand const *	TOperand<T>::_addOperand( IOperand const & rhs ) const
 		ret = boost::lexical_cast<std::string>(result);
 		type = this->getType();
 	}
-	return (VirtualMachine::createOperand(type, ret));
+	return (this->_operandFactory.createOperand(type, ret));
 }
 
 template <typename T>

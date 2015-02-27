@@ -5,9 +5,7 @@
 #include "Int32.hpp"
 #include "Float.hpp"
 #include "Double.hpp"
-#include "TOperand.hpp"
 
-class TOperand;
 
 VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _instruct(instruct)
 // VirtualMachine::VirtualMachine( void )// : _instruct(instruct)
@@ -53,14 +51,14 @@ VirtualMachine::~VirtualMachine()
 
 }
 
-const VirtualMachine::IOperandFunctionPtr VirtualMachine::_functionFactory[] =
-{
-	&VirtualMachine::createInt8,
-	&VirtualMachine::createInt16,
-	&VirtualMachine::createInt32,
-	&VirtualMachine::createFloat,
-	&VirtualMachine::createDouble
-};
+// const VirtualMachine::IOperandFunctionPtr VirtualMachine::_functionFactory[] =
+// {
+// 	&VirtualMachine::createInt8,
+// 	&VirtualMachine::createInt16,
+// 	&VirtualMachine::createInt32,
+// 	&VirtualMachine::createFloat,
+// 	&VirtualMachine::createDouble
+// };
 
 void	VirtualMachine::execute()
 {
@@ -105,8 +103,8 @@ void	VirtualMachine::execute()
 	// }
 }
 
-IOperand const * VirtualMachine::createOperand( eOperandType type, std::string const & value ) const
-{
+// IOperand const * VirtualMachine::createOperand( eOperandType type, std::string const & value ) const
+// {
 //	std::unordered_map<eOperandType, IOperandFunctionPtr>::const_iterator					found;
 //	std::map<eOperandType, IOperandFunctionPtr>::const_iterator					found;
 
@@ -118,43 +116,43 @@ IOperand const * VirtualMachine::createOperand( eOperandType type, std::string c
 	// }
 	// return NULL;
 
-	return (this->*(_functionFactory[type]))(value);
-}
+// 	return (this->*(_functionFactory[type]))(value);
+// }
 
-IOperand const * VirtualMachine::createInt8( std::string const & value ) const
-{
-	// Int8 *		newValue = new Int8(value);
-	TOperand<int8_t> *		newValue = new TOperand<int8_t>(value);
-	return newValue;
-}
+// IOperand const * VirtualMachine::createInt8( std::string const & value ) const
+// {
+// 	// Int8 *		newValue = new Int8(value);
+// 	TOperand<int8_t> *		newValue = new TOperand<int8_t>(value);
+// 	return newValue;
+// }
 
-IOperand const * VirtualMachine::createInt16( std::string const & value ) const
-{
-	// Int16 *		newValue = new Int16(value);
-	TOperand<int16_t> *		newValue = new TOperand<int16_t>(value);
-	return newValue;
-}
+// IOperand const * VirtualMachine::createInt16( std::string const & value ) const
+// {
+// 	// Int16 *		newValue = new Int16(value);
+// 	TOperand<int16_t> *		newValue = new TOperand<int16_t>(value);
+// 	return newValue;
+// }
 
-IOperand const * VirtualMachine::createInt32( std::string const & value ) const
-{
-	// Int32 *		newValue = new Int32(value);
-	TOperand<int32_t> *		newValue = new TOperand<int32_t>(value);
-	return newValue;
-}
+// IOperand const * VirtualMachine::createInt32( std::string const & value ) const
+// {
+// 	// Int32 *		newValue = new Int32(value);
+// 	TOperand<int32_t> *		newValue = new TOperand<int32_t>(value);
+// 	return newValue;
+// }
 
-IOperand const * VirtualMachine::createFloat( std::string const & value ) const
-{
-	// Float *		newValue = new Float(value);
-	TOperand<float> *		newValue = new TOperand<float>(value);
-	return newValue;
-}
+// IOperand const * VirtualMachine::createFloat( std::string const & value ) const
+// {
+// 	// Float *		newValue = new Float(value);
+// 	TOperand<float> *		newValue = new TOperand<float>(value);
+// 	return newValue;
+// }
 
-IOperand const * VirtualMachine::createDouble( std::string const & value ) const
-{
-	// Double *		newValue = new Double(value);
-	TOperand<double> *		newValue = new TOperand<double>(value);
-	return newValue;
-}
+// IOperand const * VirtualMachine::createDouble( std::string const & value ) const
+// {
+// 	// Double *		newValue = new Double(value);
+// 	TOperand<double> *		newValue = new TOperand<double>(value);
+// 	return newValue;
+// }
 
 void VirtualMachine::pushVM(instr_type const & instruction)
 {
@@ -163,7 +161,11 @@ void VirtualMachine::pushVM(instr_type const & instruction)
 	found = this->_typeMap.find(instruction.type);
 	if (found != this->_typeMap.end())
 	{
-		this->_stack.push(this->createOperand(found->second, instruction.value));
+		this->_stack.push(this->_operandFactory.createOperand(found->second, instruction.value));
+		// this->_stack.push(this->createOperand(found->second, instruction.value));
+
+
+
 		// this->_stack.push(this->createOperand(this->_typeMap[instruction.type], boost::lexical_cast<std::string>(instruction.value)));
 		std::cout << "Operand Created : " << instruction.type << std::endl; //DEBUG
 	}
