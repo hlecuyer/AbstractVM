@@ -10,11 +10,11 @@
 //                                                                            //
 // ************************************************************************** //
 
-#include <stack>
 
 #ifndef VMSTACK_HPP
 #define VMSTACK_HPP
 
+#include <stack>
 
 template <typename T>
 class VmStack : public std::stack<T>
