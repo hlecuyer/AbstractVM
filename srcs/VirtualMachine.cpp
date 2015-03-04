@@ -25,6 +25,9 @@ VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _inst
 	this->_functionInstruction["dump"] = &VirtualMachine::dumpVM;
 	this->_functionInstruction["add"] = &VirtualMachine::addVM;
 	this->_functionInstruction["sub"] = &VirtualMachine::subVM;
+	this->_functionInstruction["mul"] = &VirtualMachine::subVM;
+	this->_functionInstruction["div"] = &VirtualMachine::subVM;
+	this->_functionInstruction["mod"] = &VirtualMachine::modVM;
 	this->_functionInstruction["exit"] = &VirtualMachine::exitVM;
 	this->_functionInstruction["print"] = &VirtualMachine::printVM;
 	// this->_functionInstruction["double"] = &VirtualMachine::doublee;
@@ -258,6 +261,75 @@ void VirtualMachine::subVM(instr_type const & instruction)
 	v2 = this->_stack.top();
 	this->_stack.pop();
 	result = *v2 - *v1;
+	this->_stack.push(result);
+}
+
+void VirtualMachine::mulVM(instr_type const & instruction)
+{
+	// (void)instruction;
+	std::cout << "ici fonction mul de la VM " << std::endl;
+	/* OK ici ! */
+	IOperand const * v1;
+	IOperand const * v2;
+	IOperand const * result;
+
+	static_cast<void>(instruction);
+	if (this->_stack.size() < 2)
+	{
+		std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
+		exit(-1);
+	}
+	v1 = this->_stack.top();
+	this->_stack.pop();
+	v2 = this->_stack.top();
+	this->_stack.pop();
+	result = *v2 * *v1;
+	this->_stack.push(result);
+}
+
+void VirtualMachine::divVM(instr_type const & instruction)
+{
+	// (void)instruction;
+	std::cout << "ici fonction div de la VM " << std::endl;
+	/* OK ici ! */
+	IOperand const * v1;
+	IOperand const * v2;
+	IOperand const * result;
+
+	static_cast<void>(instruction);
+	if (this->_stack.size() < 2)
+	{
+		std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
+		exit(-1);
+	}
+	v1 = this->_stack.top();
+	this->_stack.pop();
+	v2 = this->_stack.top();
+	this->_stack.pop();
+	result = *v2 / *v1;
+	this->_stack.push(result);
+}
+
+void VirtualMachine::modVM(instr_type const & instruction)
+{
+	// (void)instruction;
+	std::cout << "ici fonction mod de la VM " << std::endl;
+	/* OK ici ! */
+	IOperand const * v1;
+	IOperand const * v2;
+	IOperand const * result;
+
+	static_cast<void>(instruction);
+	if (this->_stack.size() < 2)
+	{
+		std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
+		exit(-1);
+	}
+	v1 = this->_stack.top();
+	this->_stack.pop();
+	v2 = this->_stack.top();
+	this->_stack.pop();
+	result = *v2 % *v1;
 	this->_stack.push(result);
 }
 

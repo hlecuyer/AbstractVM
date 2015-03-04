@@ -2,8 +2,8 @@
 ; simple1.avm
 ; -----------
 
+push int8(120)
+push int8(42)
 add
-mul
-push int16(42)
-assert float(35)
-pop
+dump
+

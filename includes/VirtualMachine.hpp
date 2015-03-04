@@ -69,6 +69,9 @@ public:
 	void dumpVM( instr_type const & instruction );
 	void addVM( instr_type const & instruction );
 	void subVM( instr_type const & instruction );
+	void mulVM( instr_type const & instruction );
+	void divVM( instr_type const & instruction );
+	void modVM( instr_type const & instruction );
 	void exitVM( instr_type const & instruction );
 	void printVM( instr_type const & instruction );
 

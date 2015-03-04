@@ -6,6 +6,8 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <stdexcept>
 #include <typeinfo>
+#include <limits>
+#include <cmath>
 #include "eOperandType.hpp"
 #include "IOperand.hpp"
 #include "OperandFactory.hpp"
@@ -92,9 +94,10 @@ C		TOperand<T>::_operatorsSwitch(C a, C b, operationType operation) const
 		return this->_divOp<C>(a, b);
 		break ;
 	case operationType::modOp :
-		// return this->_modOp<C>(a, b);
+		return this->_modOp<C>(a, b);
 		break ;
 	}
+
 	return 0;
 }
 
@@ -103,6 +106,10 @@ template <typename T>
 template <typename Q>
 Q TOperand<T>::_addOp (Q a, Q b) const
 {
+	if (b > 0 && a > std::numeric_limits<Q>::max() - b)
+		std::cout << "Overflow Exeption blabla" << std::endl;
+	if (b < 0 && a < std::numeric_limits<Q>::lowest() - b)
+		std::cout << "Underflow Exeption" << std::endl;
 	return (a + b);
 }
 
@@ -110,6 +117,10 @@ template <typename T>
 template <typename Q>
 Q TOperand<T>::_subOp (Q a, Q b) const
 {
+	if (b > 0 && a > std::numeric_limits<Q>::max() + b)
+		std::cout << "Overflow Exeption" << std::endl;
+	if (b < 0 && a < std::numeric_limits<Q>::lowest() + b)
+		std::cout << "Underflow Exeption" << std::endl;
 	return (a - b);
 }
 
@@ -117,6 +128,10 @@ template <typename T>
 template <typename Q>
 Q TOperand<T>::_mulOp (Q a, Q b) const
 {
+	if (((a > 0 && b > 0) || (a < 0 && b < 0)) && a > std::numeric_limits<Q>::max() / b)
+		std::cout << "Overflow Exeption" << std::endl;
+	if (((a > 0 && b < 0) || (a < 0 && b > 0)) && a < std::numeric_limits<Q>::lowest() / b)
+		std::cout << "Underflow Exeption" << std::endl;
 	return (a * b);
 }
 
@@ -124,6 +139,12 @@ template <typename T>
 template <typename Q>
 Q TOperand<T>::_divOp (Q a, Q b) const
 {
+	if (b == 0)
+		std::cout << "Can't divide by 0 Exeption" << std::endl;
+	if (((a > 0 && b > 0) || (a < 0 && b < 0)) && a > std::numeric_limits<Q>::max() * b)
+		std::cout << "Overflow Exeption" << std::endl;
+	if (((a > 0 && b < 0) || (a < 0 && b > 0)) && a < std::numeric_limits<Q>::lowest() * b)
+		std::cout << "Underflow Exeption" << std::endl;
 	return (a / b);
 }
 
@@ -131,7 +152,13 @@ template <typename T>
 template <typename Q>
 Q TOperand<T>::_modOp (Q a, Q b) const
 {
-	return (a % b);
+	if (!std::is_integral<Q>::value)
+	 	return (fmod(a, b));
+	else {
+		int _a = static_cast<int>(a);
+		int _b = static_cast<int>(b);
+		return (_a % _b);
+	}
 }
 
 template <typename T>
@@ -147,6 +174,7 @@ IOperand const *	TOperand<T>::_genericOperation( TOperand<C> const * rhs, operat
 		C		result;
 
 		newVal = boost::numeric_cast<C>(this->_value);
+
 		result = this->_operatorsSwitch<C> (newVal, rhs->getValue(), operation);
 		ret = boost::lexical_cast<std::string>(result);
 		type = rhs->getType();
@@ -289,28 +317,7 @@ IOperand const * TOperand<T>::operator/( IOperand const & rhs ) const
 template <typename T>
 IOperand const * TOperand<T>::operator%( IOperand const & rhs ) const
 {
-	// switch (rhs.getType())
-	// {
-	// case eOperandType::int8 :
-	// 	return (this->_genericOperation<int8_t>(reinterpret_cast< TOperand<int8_t> const * >(&rhs), operationType::modOp ));
-	// 	break ;
-	// case eOperandType::int16 :
-	// 	return (this->_genericOperation<int16_t>( reinterpret_cast< TOperand<int16_t> const * >(&rhs), operationType::modOp ));
-	// 	break ;
-	// case eOperandType::int32 :
-	// 	return (this->_genericOperation<int32_t>(  reinterpret_cast< TOperand<int32_t> const * >(&rhs), operationType::modOp ));
-	// 	break ;
-	// case eOperandType::floatt :
-	// 	std::cout << "ERROR NO MOD ON FLOAT !!" << std::endl;
-	// 	// return (this->_genericOperation<float>(  reinterpret_cast< TOperand<float> const * >(&rhs), operationType::modOp ));
-	// 	break ;
-	// case eOperandType::doublee :
-	// 	std::cout << "ERROR NO MOD ON DOUBLE !!" << std::endl;
-	// 	// return (this->_genericOperation<double>(  reinterpret_cast< TOperand<double> const * >(&rhs), operationType::modOp ));
-	// 	break ;
-	// }
-	(void)rhs;
-	return this;
+	return (this->_castOperand(rhs, operationType::modOp));
 }
 
 template <typename T>
