@@ -72,6 +72,85 @@ public:
 	IOperand const * operator%( IOperand const & rhs ) const;
 	std::string const & toString( void ) const;
 
+	class OperandOverflowException : public std::runtime_error
+	{
+	private:
+//			virtual OperandOverflowException(OperandOverflowException const &) throw();
+		OperandOverflowException const & operator=(OperandOverflowException const &) throw();
+		OperandOverflowException() throw();
+		int			precision;
+
+	public:
+		// OperandOverflowException(std::string const & errorMsg, avm_instruct const & instruction) throw();
+		OperandOverflowException(int precision) throw();
+		~OperandOverflowException() throw();
+		virtual const char* 		what() const throw();
+
+	};
+
+	class OperandUnderflowException : public std::runtime_error
+	{
+	private:
+//			virtual OperandUnderflowException(OperandUnderflowException const &) throw();
+		OperandUnderflowException const & operator=(OperandUnderflowException const &) throw();
+		OperandUnderflowException() throw();
+		int			precision;
+
+	public:
+		// OperandUnderflowException(std::string const & errorMsg, avm_instruct const & instruction) throw();
+		OperandUnderflowException(int precision) throw();
+		~OperandUnderflowException() throw();
+		virtual const char* 		what() const throw();
+
+	};
+
+	class OperandZeroOperationException : public std::runtime_error
+	{
+	private:
+//			virtual OperandZeroOperationException(OperandZeroOperationException const &) throw();
+		OperandZeroOperationException const & operator=(OperandZeroOperationException const &) throw();
+		OperandZeroOperationException() throw();
+		int			precision;
+
+	public:
+		// OperandZeroOperationException(std::string const & errorMsg, avm_instruct const & instruction) throw();
+		OperandZeroOperationException(int precision) throw();
+		~OperandZeroOperationException() throw();
+		virtual const char* 		what() const throw();
+
+	};
+
+	class OperandOperationException : public std::runtime_error
+	{
+	private:
+//			virtual OperandOperationException(OperandOperationException const &) throw();
+		OperandOperationException const & operator=(OperandOperationException const &) throw();
+		OperandOperationException() throw();
+		int			precision;
+
+	public:
+		// OperandOperationException(std::string const & errorMsg, avm_instruct const & instruction) throw();
+		OperandOperationException(int precision) throw();
+		~OperandOperationException() throw();
+		virtual const char* 		what() const throw();
+
+	};
+
+	class OperandCreationCastException : public std::runtime_error
+	{
+	private:
+//			virtual OperandCreationCastException(OperandCreationCastException const &) throw();
+		OperandCreationCastException const & operator=(OperandCreationCastException const &) throw();
+		OperandCreationCastException() throw();
+		int			precision;
+
+	public:
+		// OperandCreationCastException(std::string const & errorMsg, avm_instruct const & instruction) throw();
+		OperandCreationCastException(int precision) throw();
+		~OperandCreationCastException() throw();
+		virtual const char* 		what() const throw();
+
+	};
 };
 
 // template <typename T, typename C>
@@ -168,13 +247,14 @@ IOperand const *	TOperand<T>::_genericOperation( TOperand<C> const * rhs, operat
 	std::string		ret;
 	eOperandType	type;
 
+	try
+	{
 	if (this->getPrecision() < rhs->getPrecision())
 	{
 		C		newVal;
 		C		result;
 
 		newVal = boost::numeric_cast<C>(this->_value);
-
 		result = this->_operatorsSwitch<C> (newVal, rhs->getValue(), operation);
 		ret = boost::lexical_cast<std::string>(result);
 		type = rhs->getType();
@@ -188,6 +268,11 @@ IOperand const *	TOperand<T>::_genericOperation( TOperand<C> const * rhs, operat
 		result = this->_operatorsSwitch<T> (this->_value, newVal, operation);
 		ret = boost::lexical_cast<std::string>(result);
 		type = this->getType();
+	}
+	}
+	catch(std::exception & e)
+	{
+		//la gestion !
 	}
 	return (this->_operandFactory.createOperand(type, ret));
 }

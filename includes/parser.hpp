@@ -129,7 +129,6 @@ private :
 	/** PRIVATE FUNCTION **/
 	void			_checkFailedInstruction( std::string instruction );
 	void			_initRules( void );
-	// void			_printDebug(avm_instruct instructDebug);
 
 public:
 	/** CANONICAL **/
@@ -145,12 +144,11 @@ public:
 
 	const std::list<avm_instruct>	&	getInstructionList( void ) const;
 	std::istream*				getFd( void ) const;
-	// void						dumpDebug( void ); // a faire
 
 	class ParsingException : public std::runtime_error
 	{
 		private:
-			// ParsingException(ParsingException const &) throw();
+//			virtual ParsingException(ParsingException const &) throw();
 			ParsingException const & operator=(ParsingException const &) throw();
 			ParsingException() throw();
 			std::string const	_errType;
@@ -160,10 +158,10 @@ public:
 		public:
 			ParsingException(std::string const & errType, int  const & line, std::string const & instruction) throw();
 			~ParsingException() throw();
-			virtual const char* what() const throw();
-			int 		getLine() const;
-			std::string getInstruction() const;
-			std::string getErrType() const;
+			virtual const char* 		what() const throw();
+			int 						getLine() const;
+			std::string 				getInst0ruction() const;
+			std::string 				getErrType() const;
 
 	};
 };

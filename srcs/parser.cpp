@@ -28,14 +28,6 @@ void			Parser::_initRules( void )
 	this->_errorStringWithValue = boost::spirit::qi::lexeme[instructions] >> boost::spirit::qi::lexeme[values] >> '(' >> boost::spirit::qi::double_ >> ')' >> -(boost::spirit::qi::lexeme[';' >> *boost::spirit::ascii::char_]) >> boost::spirit::qi::eoi;
 }
 
-// void			Parser::_printDebug(avm_instruct instructDebug)
-// {
-// 	std::cout << instructDebug.name;
-// 	if (instructDebug.instrType.type != "")
-// 		std::cout << " [" << instructDebug.instrType.type << "] [" << instructDebug.instrType.value << "]";
-// 	std::cout << std::endl;
-// }
-
 
 // ** CANONICAL ** //
 
@@ -99,11 +91,6 @@ std::istream*				Parser::getFd( void ) const
 {
 	return (this->_fd);
 }
-
-// void						Parser::dumpDebug( void )
-// {
-// 	for_each(this->_instructionList.begin(), this->_instructionList.end(), &Parser::_printDebug);
-// }
 
 Parser::ParsingException::ParsingException(std::string const & errType, int const & online, std::string const & instruction) throw()
 	: std::runtime_error(errType), _errType(errType), _line(online), _instruction(instruction)

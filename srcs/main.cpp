@@ -16,6 +16,7 @@
 #include <fstream>
 #include <vector>
 #include <stdio.h>
+#include <stdexcept>
 
 void    print_som(avm_instruct test)
 {
@@ -51,7 +52,8 @@ int main(int argc, char **argv)
 				// printf("la \n");
 				parser.parseFile();
 			}
-			catch (Parser::ParsingException & e)
+			// catch (Parser::ParsingException & e)
+			catch (std::exception & e)
 			{
 				std::cout << e.what() << " <= debug" << std::endl;
 				std::exit(-1);
