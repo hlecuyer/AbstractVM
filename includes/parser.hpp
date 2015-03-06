@@ -1,11 +1,13 @@
 
+
+
 #ifndef PARSER_HPP
 # define PARSER_HPP
 
 #include "misc.hpp"
 #include <string>
 #include <list>
-#include <exception>
+#include <stdexcept>
 #include <fstream>
 
 struct				instr_type
@@ -148,21 +150,21 @@ public:
 	class ParsingException : public std::runtime_error
 	{
 		private:
-			ParsingException(ParsingException const &) throw();
+			// ParsingException(ParsingException const &) throw();
 			ParsingException const & operator=(ParsingException const &) throw();
 			ParsingException() throw();
-			std::string const _errType;
-			std::string const _instruction;
-			int					_line;
+			std::string const	_errType;
+			int	const			_line;
+			std::string const	_instruction;
 
 		public:
-			ParsingException(std::string & errType, const int & line, const std::string & instruction) throw();
+			ParsingException(std::string const & errType, int  const & line, std::string const & instruction) throw();
 			~ParsingException() throw();
 			virtual const char* what() const throw();
 			int 		getLine() const;
 			std::string getInstruction() const;
 			std::string getErrType() const;
-	
+
 	};
 };
 
