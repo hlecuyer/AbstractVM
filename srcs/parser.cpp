@@ -12,10 +12,12 @@ void			Parser::_checkFailedInstruction( std::string instruction )
 	}
 	else
 	{
+		std::string err;
 		if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), this->_errorStringWithValue, boost::spirit::ascii::space))
-			std::cout << "AbstractVM: value after token with no required value" << std::endl;
-		std::cout << "AbstractVM: error line " << this->_lineCount << " : " << instruction << std::endl;
-		throw Parser::ParsingException();
+			err = "value after token with no required value";
+		else
+			err = "error";
+		throw Parser::ParsingException(err, _lineCount, instruction);
 	}
 }
 
@@ -102,7 +104,30 @@ std::istream*				Parser::getFd( void ) const
 // 	for_each(this->_instructionList.begin(), this->_instructionList.end(), &Parser::_printDebug);
 // }
 
+Parser::ParsingException(std::string errType, const int & line, const std::string & instruction)
+ : _errType(errType), _line(line), _instruction(instruction)
+{
+
+}
+
+int 				Parser::ParsingException::getLine() const
+{
+	return (_line);
+}
+
+std::string 		Parser::ParsingException::getInstruction() const
+{
+	return (_instruction);
+}
+
+std::string 		Parser::ParsingException::getErrType() const
+{
+	return (_errType);
+}
+	
 const char*					Parser::ParsingException::what() const throw()
 {
-	return "AbstractVM: Parsing error";
+
+	std::string ret = "AbstractVM: " << this->_errType << std::endl << "AbstractVM: error line " << this->_lineCount << " : " << this->_instruction << std::endl;
+	return ret.c_str();
 }

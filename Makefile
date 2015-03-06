@@ -11,7 +11,7 @@ PCH_DIR				=		$(OBJ_DIR)/pch
 PCH_TARGET			=		$(PCH_DIR)$(PCH_SUFFIX)/pch
 PCH_FLAG			=		-include $(PCH_DIR)
 
-COMPILER			=		/usr/local/bin/g++
+COMPILER			=		g++
 CFLAGS				=		-std=c++1y -g3 -Wall -Wextra -Werror -c \
 							-I$(INCLUDE_DIR) -I $(BOOST_DIR)
 LFLAGS				=		-o

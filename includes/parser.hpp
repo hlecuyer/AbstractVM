@@ -145,10 +145,24 @@ public:
 	std::istream*				getFd( void ) const;
 	// void						dumpDebug( void ); // a faire
 
-	class ParsingException : public std::exception
+	class ParsingException : public std::runtime_error
 	{
-		public :
+		private:
+			ParsingException(ParsingException const &) throw();
+			ParsingException const & operator=(ParsingException const &) throw();
+			ParsingException() throw();
+			std::string const _errType;
+			std::string const _instruction;
+			int					_line;
+
+		public:
+			ParsingException(std::string & errType, const int & line, const std::string & instruction) throw();
+			~ParsingException() throw();
 			virtual const char* what() const throw();
+			int 		getLine() const;
+			std::string getInstruction() const;
+			std::string getErrType() const;
+	
 	};
 };
 
