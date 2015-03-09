@@ -160,7 +160,7 @@ public:
 			~ParsingException() throw();
 			virtual const char* 		what() const throw();
 			int 						getLine() const;
-			std::string 				getInst0ruction() const;
+			std::string 				getInstruction() const;
 			std::string 				getErrType() const;
 
 	};

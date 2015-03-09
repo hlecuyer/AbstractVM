@@ -71,10 +71,17 @@ int main(int argc, char **argv)
 			std::cout << "===============================" << std::endl;
 			std::cout << "START EXEC" << std::endl;
 
-			VirtualMachine				VM(parser.getInstructionList());
-			// VM.addInstructions(parser.getInstructionList());
-			VM.execute();
-			std::cout << "===============================" << std::endl;
+			try
+			{
+				VirtualMachine				VM(parser.getInstructionList());
+				// VM.addInstructions(parser.getInstructionList());
+				VM.execute();
+			}
+			catch (std::exception & e )
+			{
+				std::cout << "EXEC EXCEPT : " << e.what() << std::endl;
+			}
+				std::cout << "===============================" << std::endl;
             // printf("la \n");
             // parser[i - 1] = Parser(argv[i]);
             //process.execute(parser[i - 1].parseFile());

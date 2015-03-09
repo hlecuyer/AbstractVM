@@ -100,17 +100,17 @@ Parser::ParsingException::ParsingException(std::string const & errType, int cons
 
 int 				Parser::ParsingException::getLine() const
 {
-	return (_line);
+	return (this->_line);
 }
 
 std::string 		Parser::ParsingException::getInstruction() const
 {
-	return (_instruction);
+	return (this->_instruction);
 }
 
 std::string 		Parser::ParsingException::getErrType() const
 {
-	return (_errType);
+	return (this->_errType);
 }
 
 const char*					Parser::ParsingException::what() const throw()
