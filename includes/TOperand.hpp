@@ -4,6 +4,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <iostream>
 #include <stdexcept>
 #include <typeinfo>
 #include <limits>
@@ -27,6 +28,7 @@ private:
 	T					_value;
 	eOperandType 		_type;
 	std::string			_strValue;
+	std::string			_strReturn;
 	std::string			_typeStr;
 	OperandFactory		_operandFactory;
 
@@ -65,6 +67,7 @@ public:
 	int				getPrecision( void ) const;
 	T				getValue( void ) const;
 	eOperandType	getType( void ) const;
+	std::string		getTypeStr( void ) const;
 	IOperand const * operator+( IOperand const & rhs ) const;
 	IOperand const * operator-( IOperand const & rhs ) const;
 	IOperand const * operator*( IOperand const & rhs ) const;
@@ -72,6 +75,7 @@ public:
 	IOperand const * operator%( IOperand const & rhs ) const;
 	std::string const & toString( void ) const;
 
+	// ** EXCEPTIONS ** //
 	class OperandOverflowException : public std::runtime_error
 	{
 	private:
@@ -113,15 +117,15 @@ public:
 	private:
 		OperandOperationException const & operator=(OperandOperationException const &) throw();
 		OperandOperationException() throw();
-		std::string				_operandStr(eOperandType type) const throw();
 		std::string				_operationStr( void ) const throw();
-		const char *											_errType;
-		operationType											_operation;
-		std::pair<eOperandType, std::string>					_leftValue;
-		std::pair<eOperandType, std::string>					_rightValue;
+
+		const char *										_errType;
+		operationType										_operation;
+		std::pair<std::string, std::string>					_leftValue;
+		std::pair<std::string, std::string>					_rightValue;
 
 	public:
-		OperandOperationException(const char * errType, operationType operation, std::pair<eOperandType, std::string> leftValue, std::pair<eOperandType, std::string> rightValue) throw();
+		OperandOperationException(const char * errType, operationType operation, std::pair<std::string, std::string> leftValue, std::pair<std::string, std::string> rightValue) throw();
 		~OperandOperationException() throw();
 		virtual const char* 		what() const throw();
 
@@ -132,14 +136,20 @@ public:
 	private:
 		OperandCreationCastException const & operator=(OperandCreationCastException const &) throw();
 		OperandCreationCastException() throw();
+		std::string				_type;
+		std::string				_value;
 
 	public:
-		OperandCreationCastException(const char * error) throw();
+		OperandCreationCastException(const char * error, std::string typeStr, std::string value) throw();
 		~OperandCreationCastException() throw();
 		virtual const char* 		what() const throw();
 
 	};
 };
+
+// ******************** //
+// ** IMPLEMENTATION ** //
+// ******************** //
 
 template <typename T>
 template <typename C>
@@ -149,19 +159,19 @@ C		TOperand<T>::_operatorsSwitch(C a, C b, operationType operation) const
 	{
 	case operationType::addOp :
 		return this->_addOp<C>(a, b);
-		break ;
+		// break ;
 	case operationType::subOp :
 		return this->_subOp<C>(a, b);
-		break ;
+		// break ;
 	case operationType::mulOp :
 		return this->_mulOp<C>(a, b);
-		break ;
+		// break ;
 	case operationType::divOp :
 		return this->_divOp<C>(a, b);
-		break ;
+		// break ;
 	case operationType::modOp :
 		return this->_modOp<C>(a, b);
-		break ;
+		// break ;
 	}
 
 	return 0;
@@ -245,7 +255,8 @@ IOperand const *	TOperand<T>::_genericOperation( TOperand<C> const * rhs, operat
 
 			newVal = boost::numeric_cast<C>(this->_value);
 			result = this->_operatorsSwitch<C> (newVal, rhs->getValue(), operation);
-			ret = boost::lexical_cast<std::string>(result);
+			// ret = boost::lexical_cast<std::string>(result);
+			ret = std::to_string(result);
 			type = rhs->getType();
 		}
 		else
@@ -255,14 +266,16 @@ IOperand const *	TOperand<T>::_genericOperation( TOperand<C> const * rhs, operat
 
 			newVal = boost::numeric_cast<T>(rhs->getValue());
 			result = this->_operatorsSwitch<T> (this->_value, newVal, operation);
-			ret = boost::lexical_cast<std::string>(result);
+			// ret = boost::lexical_cast<std::string>(result);
+			ret = std::to_string(result);
 			type = this->getType();
 		}
 	}
 	catch(std::exception & e)
 	{
-		throw TOperand<T>::OperandOperationException(e.what(), operation, std::pair<eOperandType, std::string>(this->_type, this->_strValue), std::pair<eOperandType, std::string>(rhs->getType(), rhs->toString()));
+		throw TOperand<T>::OperandOperationException(e.what(), operation, std::pair<std::string, std::string>(this->_typeStr, this->_strValue), std::pair<std::string, std::string>(rhs->getTypeStr(), rhs->toString()));
 	}
+	// std::cout << "RET -> " << ret << std::endl;
 	return (this->_operandFactory.createOperand(type, ret));
 }
 
@@ -274,24 +287,19 @@ TOperand<T>::TOperand(std::string value) : _strValue(value)
 	try
 	{
 		this->_value = boost::numeric_cast<T>(boost::lexical_cast<double>(value));
+		this->_strReturn = std::to_string(this->_value);
 	}
-	catch ( boost::numeric::positive_overflow & e)
+	catch ( boost::numeric::positive_overflow & e )
 	{
-		throw OperandCreationCastException(e.what());
-		// std::cout << "AbstractVM: " << this->_typeStr << ": " << e.what() << std::endl;
-		// std::exit(-1);
+		throw OperandCreationCastException(e.what(), this->_typeStr, value);
 	}
-	catch ( boost::numeric::negative_overflow & e)
+	catch ( boost::numeric::negative_overflow & e )
 	{
-		throw OperandCreationCastException(e.what());
-		// std::cout << "AbstractVM: " << this->_typeStr << ": " << e.what() << std::endl;
-		// std::exit(-1);
+		throw OperandCreationCastException(e.what(), this->_typeStr, value);
 	}
-	catch ( boost::bad_lexical_cast const & e)
+	catch ( boost::bad_lexical_cast const & e )
 	{
-		throw OperandCreationCastException(e.what());
-		// std::cout << "AbstractVM: " << this->_typeStr << ": " << e.what() <<  std::endl;
-		// std::exit(-1);
+		throw OperandCreationCastException(e.what(), this->_typeStr, value);
 	}
 }
 
@@ -336,9 +344,19 @@ eOperandType TOperand<T>::getType( void ) const
 }
 
 template <typename T>
+std::string		TOperand<T>::getTypeStr( void ) const
+{
+	return (this->_typeStr);
+}
+
+template <typename T>
 std::string const & TOperand<T>::toString( void ) const
 {
-	return (this->_strValue);
+	// std::cout << "ici valeur str : " << convert.str() << std::endl;
+	// return (this->_strValue);
+	return (this->_strReturn);
+	// return (convert.str());
+	// return (boost::lexical_cast<std::string const>(this->_value));
 }
 
 
@@ -349,19 +367,19 @@ IOperand const * TOperand<T>::_castOperand( IOperand const & rhs, operationType 
 	{
 	case eOperandType::int8 :
 		return (this->_genericOperation<int8_t>(reinterpret_cast< TOperand<int8_t> const * >(&rhs), operation ));
-		break ;
+		// break ;
 	case eOperandType::int16 :
 		return (this->_genericOperation<int16_t>( reinterpret_cast< TOperand<int16_t> const * >(&rhs), operation ));
-		break ;
+		// break ;
 	case eOperandType::int32 :
 		return (this->_genericOperation<int32_t>(  reinterpret_cast< TOperand<int32_t> const * >(&rhs), operation ));
-		break ;
+		// break ;
 	case eOperandType::floatt :
 		return (this->_genericOperation<float>(  reinterpret_cast< TOperand<float> const * >(&rhs), operation ));
-		break ;
+		// break ;
 	case eOperandType::doublee :
 		return (this->_genericOperation<double>(  reinterpret_cast< TOperand<double> const * >(&rhs), operation ));
-		break ;
+		// break ;
 	}
 
 	return this;
@@ -427,6 +445,10 @@ void	TOperand<T>::_findType( void )
 	}
 }
 
+// **************** //
+// ** EXCEPTIONS ** //
+// **************** //
+
 template <typename T>
 TOperand<T>::OperandOverflowException::OperandOverflowException( void ) throw() : std::runtime_error("")
 {
@@ -488,18 +510,20 @@ TOperand<T>::OperandZeroOperationException::~OperandZeroOperationException() thr
 
 
 template <typename T>
-TOperand<T>::OperandOperationException::OperandOperationException(const char * errType, operationType operation, std::pair<eOperandType, std::string> leftValue, std::pair<eOperandType, std::string> rightValue) throw()
-	: std::runtime_error(""), _errType(errType), _operation(operation), _leftValue(leftValue), _rightValue(rightValue)
+TOperand<T>::OperandOperationException::OperandOperationException(const char * errType, operationType operation, std::pair<std::string, std::string> leftValue, std::pair<std::string, std::string> rightValue) throw()
+	: std::runtime_error(errType), _operation(operation), _leftValue(leftValue), _rightValue(rightValue)
+	// : std::runtime_error(""), _errType(errType), _operation(operation), _leftValue(leftValue), _rightValue(rightValue)
 {
 }
 
 template <typename T>
 const char*					TOperand<T>::OperandOperationException::what() const throw()
 {
-	std::string leftVal = this->_operandStr(this->_leftValue.first) + "(" + this->_leftValue.second + ")";
-	std::string rightVal = this->_operandStr(this->_rightValue.first) + "(" + this->_rightValue.second + ")";
+	std::string leftVal = this->_leftValue.first + "(" + this->_leftValue.second + ")";
+	std::string rightVal = this->_rightValue.first + "(" + this->_rightValue.second + ")";
 
-	std::string ret = std::string("AbstractVM: ") + this->_errType + std::string(" on operation '") + this->_operationStr() + std::string("' with operands ")
+	std::string ret = std::string(std::runtime_error::what()) + std::string(" on operation '") + this->_operationStr() + std::string("' with operands ")
+	// std::string ret = std::string("AbstractVM: ") + this->_errType + std::string(" on operation '") + this->_operationStr() + std::string("' with operands ")
 		+ leftVal + " and " + rightVal;
 	return ret.c_str();
 }
@@ -508,25 +532,6 @@ template <typename T>
 TOperand<T>::OperandOperationException::~OperandOperationException() throw()
 {
 	return ;
-}
-
-template <typename T>
-std::string					TOperand<T>::OperandOperationException::_operandStr(eOperandType type) const throw()
-{
-	switch (type)
-	{
-	case eOperandType::int8 :
-		return "int8";
-	case eOperandType::int16 :
-		return "int16";
-	case eOperandType::int32 :
-		return "int32";
-	case eOperandType::floatt :
-		return "float";
-	case eOperandType::doublee :
-		return "double";
-	}
-	return "";
 }
 
 template <typename T>
@@ -549,7 +554,7 @@ std::string					TOperand<T>::OperandOperationException::_operationStr( void ) co
 }
 
 template <typename T>
-TOperand<T>::OperandCreationCastException::OperandCreationCastException( const char * error ) throw() : std::runtime_error(error)
+TOperand<T>::OperandCreationCastException::OperandCreationCastException( const char * error, std::string typeStr, std::string value ) throw() : std::runtime_error(error), _type(typeStr), _value(value)
 {
 
 }
@@ -557,7 +562,8 @@ TOperand<T>::OperandCreationCastException::OperandCreationCastException( const c
 template <typename T>
 const char*					TOperand<T>::OperandCreationCastException::what() const throw()
 {
-	std::string ret = "Abstract VM : " + std::string(std::runtime_error::what());
+	// std::string ret = "Abstract VM : " + std::string(std::runtime_error::what()) + " on creation of operand " + this->_type + "(" + this->_value + ")";
+	std::string ret = std::string(std::runtime_error::what()) + " on creation of operand " + this->_type + "(" + this->_value + ")";
 	return ret.c_str();
 }
 

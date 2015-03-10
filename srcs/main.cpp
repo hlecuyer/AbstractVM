@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 			}
 			catch (std::exception & e )
 			{
-				std::cout << "EXEC EXCEPT : " << e.what() << std::endl;
+				std::cout << "Abstract VM : " << e.what() << std::endl;
 			}
 				std::cout << "===============================" << std::endl;
             // printf("la \n");
@@ -87,5 +87,5 @@ int main(int argc, char **argv)
             //process.execute(parser[i - 1].parseFile());
     //     }
     }
-    return 0;
+    return (0);
 }

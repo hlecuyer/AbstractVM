@@ -33,6 +33,9 @@ private:
 	VirtualMachine();
 	VirtualMachine& operator=(VirtualMachine const &);
 
+	void		_deleteStack( void );
+	void		_checkStack( size_t value, avm_instruct const & instruction );
+
 public:
 	VirtualMachine( const std::list<avm_instruct> & instruct );
 	~VirtualMachine( void );
@@ -49,6 +52,20 @@ public:
 	void modVM( avm_instruct const & instruction );
 	void exitVM( avm_instruct const & instruction );
 	void printVM( avm_instruct const & instruction );
+
+	class VirtualMachineExecException : public std::runtime_error
+	{
+	private:
+//			virtual VirtualMachineExecException(VirtualMachineExecException const &) throw();
+		VirtualMachineExecException const & operator=(VirtualMachineExecException const &) throw();
+		VirtualMachineExecException() throw();
+
+	public:
+		VirtualMachineExecException(std::string const & errorMsg) throw();
+		~VirtualMachineExecException() throw();
+		virtual const char* 		what() const throw();
+
+	};
 
 	class VirtualMachineException : public std::runtime_error
 	{
