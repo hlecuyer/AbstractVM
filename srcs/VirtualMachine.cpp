@@ -17,8 +17,8 @@ VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _inst
 	this->_functionInstruction["dump"] = &VirtualMachine::dumpVM;
 	this->_functionInstruction["add"] = &VirtualMachine::addVM;
 	this->_functionInstruction["sub"] = &VirtualMachine::subVM;
-	this->_functionInstruction["mul"] = &VirtualMachine::subVM;
-	this->_functionInstruction["div"] = &VirtualMachine::subVM;
+	this->_functionInstruction["mul"] = &VirtualMachine::mulVM;
+	this->_functionInstruction["div"] = &VirtualMachine::divVM;
 	this->_functionInstruction["mod"] = &VirtualMachine::modVM;
 	this->_functionInstruction["exit"] = &VirtualMachine::exitVM;
 	this->_functionInstruction["print"] = &VirtualMachine::printVM;
@@ -285,7 +285,7 @@ void VirtualMachine::printVM(avm_instruct const & instruction)
 		TOperand<int8_t> const *		addr;
 
 		addr = reinterpret_cast<TOperand<int8_t> const *>(this->_stack.top());
-		std::cout << static_cast< const char>(addr->getValue()) << std::endl;
+		std::cout << static_cast< const char>(addr->getValue());
 	}
 	else
 	{

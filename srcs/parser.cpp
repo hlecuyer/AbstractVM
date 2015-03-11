@@ -14,12 +14,20 @@ void			Parser::_checkFailedInstruction( std::string instruction )
 	else
 	{
 		std::string err;
-		if (boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), this->_errorStringWithValue, boost::spirit::ascii::space))
+		int boole;
+		try{
+			boole = boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), this->_errorStringWithValue, boost::spirit::ascii::space);
+		}
+		catch (std::exception & e){
+			std::cout << e.what() << std::endl;
+		}
+		if (boole)
 			err = "value after token with no required value";
 		else
 			err = "unknown instruction";
 			// err = "Parsing error";
 		// throw Parser::ParsingException(err, _lineCount, instruction);
+
 		this->_addException(err, this->_lineCount, instruction);
 	}
 }
@@ -84,14 +92,21 @@ void						Parser::parseFile( void )
 	while (std::getline(*this->_fd, line))
 	{
 		this->_lineCount++;
-		std::cout << "Getline : " << line << std::endl; //DEBUG
+//		std::cout << "Getline : " << line << std::endl; //DEBUG
 		if (line == "")
 			continue ;
 		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))
 			return ;
 		try
 		{
-			ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), this->_grammar, boost::spirit::ascii::space, this->_instructionList);
+			try
+			{
+				ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), this->_grammar, boost::spirit::ascii::space, this->_instructionList);
+			}
+			catch (std::exception & e)
+			{
+				std::cout << e.what() << std::endl;
+			}
 			if (!ret)
 				this->_checkFailedInstruction(line);
 		}
@@ -140,9 +155,9 @@ std::istream*				Parser::getFd( void ) const
 // *************** //
 
 Parser::ParsingException::ParsingException(std::list<std::string> const & errorList) throw()
-	: std::runtime_error(""), _errorList(errorList)
+	: std::runtime_error("bla"), _errorList(errorList)
 {
-
+	std::cout << "Parsing exeption created" << std::endl;
 }
 
 const char*					Parser::ParsingException::what() const throw()
