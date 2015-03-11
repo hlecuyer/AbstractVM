@@ -99,10 +99,10 @@ struct instruction_parser : boost::spirit::qi::grammar<Iterator, avm_instruct(),
 
 			start.name("start_tag");
 
-			boost::spirit::qi::on_error<boost::spirit::qi::fail>(
-				start,
-				std::cout << boost::phoenix::val("AbstractVM : No value after token : ") << boost::phoenix::construct<std::string>(boost::spirit::qi::_1, boost::spirit::qi::_3) << std::endl
-			);
+			// boost::spirit::qi::on_error<boost::spirit::qi::fail>(
+			// 	start,
+			// 	std::cout << boost::phoenix::val("AbstractVM : No value after token : ") << boost::phoenix::construct<std::string>(boost::spirit::qi::_1, boost::spirit::qi::_3) << std::endl
+			// );
         }
 	std::string		rf;
 
@@ -120,8 +120,10 @@ private :
 	/** ATTRIBUTES **/
 	std::istream*									_fd;
 	std::list<avm_instruct>							_instructionList;
+	std::list<std::string>							_exceptionList;
 	instruction_parser<std::string::iterator>		_grammar;
 	int												_lineCount;
+	bool											_parsingSuccess;
 	boost::spirit::qi::rule<std::string::iterator, std::string(), boost::spirit::ascii::space_type> _commentString;
 	boost::spirit::qi::rule<std::string::iterator, std::string(), boost::spirit::ascii::space_type> _errorStringWithValue;
 
@@ -129,6 +131,7 @@ private :
 	/** PRIVATE FUNCTION **/
 	void			_checkFailedInstruction( std::string instruction );
 	void			_initRules( void );
+	void			_addException(std::string error, int line, std::string instruction);
 
 public:
 	/** CANONICAL **/
@@ -145,23 +148,44 @@ public:
 	const std::list<avm_instruct>	&	getInstructionList( void ) const;
 	std::istream*				getFd( void ) const;
 
+// 	class ParsingException : public std::runtime_error
+// 	{
+// 		private:
+// //			virtual ParsingException(ParsingException const &) throw();
+// 			ParsingException const & operator=(ParsingException const &) throw();
+// 			ParsingException() throw();
+// 			std::string const	_errType;
+// 			int	const			_line;
+// 			std::string const	_instruction;
+
+// 		public:
+// 			ParsingException(std::string const & errType, int  const & line, std::string const & instruction) throw();
+// 			~ParsingException() throw();
+// 			virtual const char* 		what() const throw();
+// 			int 						getLine() const;
+// 			std::string 				getInstruction() const;
+// 			std::string 				getErrType() const;
+
+// 	};
+
 	class ParsingException : public std::runtime_error
 	{
 		private:
 //			virtual ParsingException(ParsingException const &) throw();
 			ParsingException const & operator=(ParsingException const &) throw();
 			ParsingException() throw();
-			std::string const	_errType;
-			int	const			_line;
-			std::string const	_instruction;
+		std::list<std::string> const & _errorList;
+			// std::string const	_errType;
+			// int	const			_line;
+			// std::string const	_instruction;
 
-		public:
-			ParsingException(std::string const & errType, int  const & line, std::string const & instruction) throw();
-			~ParsingException() throw();
+	public:
+		ParsingException(std::list<std::string> const & errorList ) throw();
+		~ParsingException() throw();
 			virtual const char* 		what() const throw();
-			int 						getLine() const;
-			std::string 				getInstruction() const;
-			std::string 				getErrType() const;
+			// int 						getLine() const;
+			// std::string 				getInstruction() const;
+			// std::string 				getErrType() const;
 
 	};
 };

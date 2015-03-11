@@ -11,7 +11,6 @@ VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _inst
 	this->_typeMap["float"] = eOperandType::floatt;
 	this->_typeMap["double"] = eOperandType::doublee;
 
-
 	this->_functionInstruction["push"] = &VirtualMachine::pushVM;
 	this->_functionInstruction["pop"] = &VirtualMachine::popVM;
 	this->_functionInstruction["assert"] = &VirtualMachine::assertVM;
@@ -39,22 +38,23 @@ void	VirtualMachine::execute()
 
 	try
 	{
-	for (it = this->_instruct.begin(); it != ite; it++)
-	{
-		found = this->_functionInstruction.find(it->name);
-		if (found != this->_functionInstruction.end())
+		for (it = this->_instruct.begin(); it != ite; it++)
 		{
-			(this->*(_functionInstruction[it->name]))(*it);
-		}
+			found = this->_functionInstruction.find(it->name);
+			if (found != this->_functionInstruction.end())
+			{
+				(this->*(_functionInstruction[it->name]))(*it);
+			}
 		// else
 		// {
 		// 	throw VirtualMachineException("Instruction not found."); //DEBUG
 		// }
-	}
-	throw VirtualMachineException("No exit in file.");
+		}
+		throw VirtualMachineException("No exit in file.");
 	}
 	catch (std::exception & e)
 	{
+		this->_deleteStack();
 		throw VirtualMachineExecException(e.what());
 	}
 }
@@ -261,6 +261,41 @@ void VirtualMachine::modVM(avm_instruct const & instruction)
 	delete v2;
 }
 
+void VirtualMachine::exitVM(avm_instruct const & instruction)
+{
+	static_cast<void>(instruction);
+	this->_deleteStack();
+	std::exit(0);
+}
+
+void VirtualMachine::printVM(avm_instruct const & instruction)
+{
+	static_cast<void>(instruction);
+	this->_checkStack(1, instruction);
+	// if (this->_stack.size() < 1)
+	// {
+	// 	throw VmInstructionException("Empty stack", instruction);
+	// 	//mettre error !!
+	// 	// std::exit(-1);
+	// }
+	// else
+	// {
+	if (this->_stack.top()->getPrecision() == 0)
+	{
+		TOperand<int8_t> const *		addr;
+
+		addr = reinterpret_cast<TOperand<int8_t> const *>(this->_stack.top());
+		std::cout << static_cast< const char>(addr->getValue()) << std::endl;
+	}
+	else
+	{
+		throw VmInstructionException("Incorrect operand", instruction);
+			//mettre error !!
+			// std::exit(-1);
+	}
+	// }
+}
+
 void VirtualMachine::_checkStack( size_t value, avm_instruct const & instruction )
 {
 	if (this->_stack.size() < value)
@@ -280,44 +315,6 @@ void VirtualMachine::_deleteStack( void )
 		this->_stack.pop();
 		delete tmp;
 	}
-}
-
-void VirtualMachine::exitVM(avm_instruct const & instruction)
-{
-	// IOperand const *						tmp;
-
-	static_cast<void>(instruction);
-	this->_deleteStack();
-	// faire des delete !!
-	std::exit(0);
-}
-
-void VirtualMachine::printVM(avm_instruct const & instruction)
-{
-	static_cast<void>(instruction);
-	this->_checkStack(1, instruction);
-	// if (this->_stack.size() < 1)
-	// {
-	// 	throw VmInstructionException("Empty stack", instruction);
-	// 	//mettre error !!
-	// 	// std::exit(-1);
-	// }
-	// else
-	// {
-		if (this->_stack.top()->getPrecision() == 0)
-		{
-			TOperand<int8_t> const *		addr;
-
-			addr = reinterpret_cast<TOperand<int8_t> const *>(this->_stack.top());
-			std::cout << static_cast< const char>(addr->getValue()) << std::endl;
-		}
-		else
-		{
-			throw VmInstructionException("Incorrect operand", instruction);
-			//mettre error !!
-			// std::exit(-1);
-		}
-	// }
 }
 
 // **************** //
