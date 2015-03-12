@@ -88,7 +88,7 @@ void						Parser::parseFile( void )
 		if (line == "")
 			continue ;
 		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))
-			return ;
+			break ;
 		try
 		{
 			// try

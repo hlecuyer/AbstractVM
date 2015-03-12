@@ -20,16 +20,18 @@
 
 int main(int argc, char **argv)
 {
-    Parser              parser;
+    Parser *            parser;
     std::ifstream       stream;
-    std::list<avm_instruct> test;
 
 	try
 	{
 		if (argc == 1)
 		{
-			parser = Parser();
-			parser.parseFile();
+			parser = new Parser();
+			parser->parseFile();
+			VirtualMachine				VM(parser->getInstructionList());
+			VM.execute();
+			delete parser;
 		}
 		else
 		{
@@ -39,15 +41,16 @@ int main(int argc, char **argv)
 				std::cout << "Abstract VM: executing file: *** " <<  argv[i] << " ***" << std::endl;
 				try
 				{
+					stream.close();
 					stream.open(argv[i]);
 					if (stream.is_open())
 					{
-						parser = Parser(&stream);
-						parser.parseFile();
-			            test = parser.getInstructionList();
-						VirtualMachine				VM(parser.getInstructionList());
+//						Parser 						parser(&stream);
+						parser = new Parser(&stream);
+						parser->parseFile();
+						VirtualMachine				VM(parser->getInstructionList());
 						VM.execute();
-						stream.close();
+						delete parser;
 					}
 					else
 					{
@@ -57,8 +60,8 @@ int main(int argc, char **argv)
 				}
 				catch (std::exception & e)
 				{
-					stream.close();
 					std::cout << "Abstract VM: " << e.what() << std::endl;
+					delete parser;
 				}
 				i++;
 				std::cout << "----------------------" << std::endl;

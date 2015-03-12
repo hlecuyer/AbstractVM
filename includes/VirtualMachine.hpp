@@ -9,9 +9,6 @@
 #include "VmStack.hpp"
 #include "OperandFactory.hpp"
 
-#include "Int8.hpp"
-#include "Int16.hpp"
-
 
 class VirtualMachine
 {
