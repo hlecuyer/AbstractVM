@@ -159,19 +159,14 @@ C		TOperand<T>::_operatorsSwitch(C a, C b, operationType operation) const
 	{
 	case operationType::addOp :
 		return this->_addOp<C>(a, b);
-		// break ;
 	case operationType::subOp :
 		return this->_subOp<C>(a, b);
-		// break ;
 	case operationType::mulOp :
 		return this->_mulOp<C>(a, b);
-		// break ;
 	case operationType::divOp :
 		return this->_divOp<C>(a, b);
-		// break ;
 	case operationType::modOp :
 		return this->_modOp<C>(a, b);
-		// break ;
 	}
 
 	return 0;
@@ -255,7 +250,6 @@ IOperand const *	TOperand<T>::_genericOperation( TOperand<C> const * rhs, operat
 
 			newVal = boost::numeric_cast<C>(this->_value);
 			result = this->_operatorsSwitch<C> (newVal, rhs->getValue(), operation);
-			// ret = boost::lexical_cast<std::string>(result);
 			ret = std::to_string(result);
 			type = rhs->getType();
 		}
@@ -266,7 +260,6 @@ IOperand const *	TOperand<T>::_genericOperation( TOperand<C> const * rhs, operat
 
 			newVal = boost::numeric_cast<T>(rhs->getValue());
 			result = this->_operatorsSwitch<T> (this->_value, newVal, operation);
-			// ret = boost::lexical_cast<std::string>(result);
 			ret = std::to_string(result);
 			type = this->getType();
 		}
@@ -275,7 +268,6 @@ IOperand const *	TOperand<T>::_genericOperation( TOperand<C> const * rhs, operat
 	{
 		throw TOperand<T>::OperandOperationException(e.what(), operation, std::pair<std::string, std::string>(this->_typeStr, this->_strValue), std::pair<std::string, std::string>(rhs->getTypeStr(), rhs->toString()));
 	}
-	// std::cout << "RET -> " << ret << std::endl;
 	return (this->_operandFactory.createOperand(type, ret));
 }
 
@@ -352,11 +344,7 @@ std::string		TOperand<T>::getTypeStr( void ) const
 template <typename T>
 std::string const & TOperand<T>::toString( void ) const
 {
-	// std::cout << "ici valeur str : " << convert.str() << std::endl;
-	// return (this->_strValue);
 	return (this->_strReturn);
-	// return (convert.str());
-	// return (boost::lexical_cast<std::string const>(this->_value));
 }
 
 

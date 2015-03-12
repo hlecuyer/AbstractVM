@@ -19,11 +19,6 @@ LFLAGS				=		-o
 SRC					=		main.cpp		\
 							parser.cpp		\
 							VirtualMachine.cpp \
-							Int8.cpp			\
-							Int32.cpp			\
-							Float.cpp			\
-							Double.cpp			\
-							Int16.cpp			\
 							OperandFactory.cpp
 
 OBJ					=		$(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.cpp=.o)))

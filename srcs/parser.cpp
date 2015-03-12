@@ -14,20 +14,12 @@ void			Parser::_checkFailedInstruction( std::string instruction )
 	else
 	{
 		std::string err;
-		int boole;
-		try{
-			boole = boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), this->_errorStringWithValue, boost::spirit::ascii::space);
-		}
-		catch (std::exception & e){
-			std::cout << e.what() << std::endl;
-		}
+		bool boole;
+		boole = boost::spirit::qi::phrase_parse(instruction.begin(), instruction.end(), this->_errorStringWithValue, boost::spirit::ascii::space);
 		if (boole)
 			err = "value after token with no required value";
 		else
 			err = "unknown instruction";
-			// err = "Parsing error";
-		// throw Parser::ParsingException(err, _lineCount, instruction);
-
 		this->_addException(err, this->_lineCount, instruction);
 	}
 }
@@ -99,14 +91,14 @@ void						Parser::parseFile( void )
 			return ;
 		try
 		{
-			try
-			{
+			// try
+			// {
 				ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), this->_grammar, boost::spirit::ascii::space, this->_instructionList);
-			}
-			catch (std::exception & e)
-			{
-				std::cout << e.what() << std::endl;
-			}
+			// }
+			// catch (std::exception & e)
+			// {
+
+			// }
 			if (!ret)
 				this->_checkFailedInstruction(line);
 		}

@@ -30,6 +30,9 @@ private:
 	//ICI NEW
 	OperandFactory										_operandFactory;
 
+	//EXIT
+	bool												_exit;
+
 	VirtualMachine();
 	VirtualMachine& operator=(VirtualMachine const &);
 
@@ -56,7 +59,6 @@ public:
 	class VirtualMachineExecException : public std::runtime_error
 	{
 	private:
-//			virtual VirtualMachineExecException(VirtualMachineExecException const &) throw();
 		VirtualMachineExecException const & operator=(VirtualMachineExecException const &) throw();
 		VirtualMachineExecException() throw();
 
@@ -70,21 +72,18 @@ public:
 	class VirtualMachineException : public std::runtime_error
 	{
 	private:
-//			virtual VirtualMachineException(VirtualMachineException const &) throw();
 		VirtualMachineException const & operator=(VirtualMachineException const &) throw();
 		VirtualMachineException() throw();
 
 	public:
 		VirtualMachineException(std::string const & errorMsg) throw();
 		~VirtualMachineException() throw();
-		// virtual const char* 		what() const throw();
 
 	};
 
 	class VmInstructionException : public std::runtime_error
 	{
 	private:
-//			virtual VmInstructionException(VmInstructionException const &) throw();
 		VmInstructionException const & operator=(VmInstructionException const &) throw();
 		VmInstructionException() throw();
 		avm_instruct const &		_errorInstr;

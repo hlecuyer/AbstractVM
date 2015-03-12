@@ -3,7 +3,7 @@
 #include "TOperand.hpp"
 
 
-VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _instruct(instruct)
+VirtualMachine::VirtualMachine(const std::list<avm_instruct> & instruct) : _instruct(instruct), _exit(false)
 {
 	this->_typeMap["int8"] = eOperandType::int8;
 	this->_typeMap["int16"] = eOperandType::int16;
@@ -45,12 +45,11 @@ void	VirtualMachine::execute()
 			{
 				(this->*(_functionInstruction[it->name]))(*it);
 			}
-		// else
-		// {
-		// 	throw VirtualMachineException("Instruction not found."); //DEBUG
-		// }
+			if (this->_exit == true)
+				break;
 		}
-		throw VirtualMachineException("No exit in file.");
+		if (this->_exit == false)
+			throw VirtualMachineException("No exit in file.");
 	}
 	catch (std::exception & e)
 	{
@@ -68,18 +67,11 @@ void VirtualMachine::pushVM(avm_instruct const & instruction)
 	if (found != this->_typeMap.end())
 	{
 		this->_stack.push(this->_operandFactory.createOperand(found->second, instruction.instrType.value));
-
-		std::cout << "Operand Created : " << instruction.instrType.type << std::endl; //DEBUG
 	}
-	// else
-	// {
-	// 	std::cout << "AbstractVM: wrong, not working !" << std::endl; //DEBUG
-	// }
 }
 
 void VirtualMachine::assertVM(avm_instruct const & instruction)
 {
-	std::cout << "ici fonction assert de la VM " << std::endl;
 	std::map<std::string, eOperandType>::const_iterator					found;
 	IOperand const *													assertValue;
 
@@ -91,8 +83,6 @@ void VirtualMachine::assertVM(avm_instruct const & instruction)
 		if (this->_stack.top()->getType() != assertValue->getType() || this->_stack.top()->toString() != assertValue->toString())
 			throw VmInstructionException("Failed assert", instruction);
 		delete assertValue;
-
-		std::cout << "Operand Assert : " << instruction.instrType.type << std::endl; //DEBUG
 	}
 }
 
@@ -126,28 +116,16 @@ void VirtualMachine::dumpVM(avm_instruct const & instruction)
 
 void VirtualMachine::addVM(avm_instruct const & instruction)
 {
-	// (void)instruction;
-	std::cout << "ici fonction add de la VM " << std::endl;
-	/* OK ici ! */
 	IOperand const * v1;
 	IOperand const * v2;
 	IOperand const * result;
 
-	// static_cast<void>(instruction);
 	this->_checkStack(2, instruction);
-	// if (this->_stack.size() < 2)
-	// {
-	// 	throw VmInstructionException("Less than two value on stack", instruction);
-	// 	// std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
-	// 	// exit(-1);
-	// }
 	v1 = this->_stack.top();
 	this->_stack.pop();
 	v2 = this->_stack.top();
 	this->_stack.pop();
-	// std::cout << "ici" << std::endl;
 	result = *v1 + *v2;
-	// std::cout << "la" << std::endl;
 	this->_stack.push(result);
 	delete v1;
 	delete v2;
@@ -155,21 +133,12 @@ void VirtualMachine::addVM(avm_instruct const & instruction)
 
 void VirtualMachine::subVM(avm_instruct const & instruction)
 {
-	// (void)instruction;
-	std::cout << "ici fonction sub de la VM " << std::endl;
-	/* OK ici ! */
 	IOperand const * v1;
 	IOperand const * v2;
 	IOperand const * result;
 
 	static_cast<void>(instruction);
 	this->_checkStack(2, instruction);
-	// if (this->_stack.size() < 2)
-	// {
-	// 	throw VmInstructionException("Less than two value on stack", instruction);
-	// 	// std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
-	// 	// exit(-1);
-	// }
 	v1 = this->_stack.top();
 	this->_stack.pop();
 	v2 = this->_stack.top();
@@ -182,21 +151,12 @@ void VirtualMachine::subVM(avm_instruct const & instruction)
 
 void VirtualMachine::mulVM(avm_instruct const & instruction)
 {
-	// (void)instruction;
-	std::cout << "ici fonction mul de la VM " << std::endl;
-	/* OK ici ! */
 	IOperand const * v1;
 	IOperand const * v2;
 	IOperand const * result;
 
 	static_cast<void>(instruction);
 	this->_checkStack(2, instruction);
-	// if (this->_stack.size() < 2)
-	// {
-	// 	throw VmInstructionException("Less than two value on stack", instruction);
-	// 	// std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
-	// 	// exit(-1);
-	// }
 	v1 = this->_stack.top();
 	this->_stack.pop();
 	v2 = this->_stack.top();
@@ -209,21 +169,13 @@ void VirtualMachine::mulVM(avm_instruct const & instruction)
 
 void VirtualMachine::divVM(avm_instruct const & instruction)
 {
-	// (void)instruction;
-	std::cout << "ici fonction div de la VM " << std::endl;
-	/* OK ici ! */
+
 	IOperand const * v1;
 	IOperand const * v2;
 	IOperand const * result;
 
 	static_cast<void>(instruction);
 	this->_checkStack(2, instruction);
-	// if (this->_stack.size() < 2)
-	// {
-	// 	throw VmInstructionException("Less than two value on stack", instruction);
-	// 	// std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
-	// 	// exit(-1);
-	// }
 	v1 = this->_stack.top();
 	this->_stack.pop();
 	v2 = this->_stack.top();
@@ -236,21 +188,12 @@ void VirtualMachine::divVM(avm_instruct const & instruction)
 
 void VirtualMachine::modVM(avm_instruct const & instruction)
 {
-	// (void)instruction;
-	std::cout << "ici fonction mod de la VM " << std::endl;
-	/* OK ici ! */
 	IOperand const * v1;
 	IOperand const * v2;
 	IOperand const * result;
 
 	static_cast<void>(instruction);
 	this->_checkStack(2, instruction);
-	// if (this->_stack.size() < 2)
-	// {
-	// 	throw VmInstructionException("Less than two value on stack", instruction);
-	// 	// std::cout << "EXCEPTION PAS ASSEZ STACK !" << std::endl;
-	// 	// exit(-1);
-	// }
 	v1 = this->_stack.top();
 	this->_stack.pop();
 	v2 = this->_stack.top();
@@ -265,21 +208,13 @@ void VirtualMachine::exitVM(avm_instruct const & instruction)
 {
 	static_cast<void>(instruction);
 	this->_deleteStack();
-	std::exit(0);
+	this->_exit = true;	
 }
 
 void VirtualMachine::printVM(avm_instruct const & instruction)
 {
 	static_cast<void>(instruction);
 	this->_checkStack(1, instruction);
-	// if (this->_stack.size() < 1)
-	// {
-	// 	throw VmInstructionException("Empty stack", instruction);
-	// 	//mettre error !!
-	// 	// std::exit(-1);
-	// }
-	// else
-	// {
 	if (this->_stack.top()->getPrecision() == 0)
 	{
 		TOperand<int8_t> const *		addr;
@@ -290,10 +225,7 @@ void VirtualMachine::printVM(avm_instruct const & instruction)
 	else
 	{
 		throw VmInstructionException("Incorrect operand", instruction);
-			//mettre error !!
-			// std::exit(-1);
 	}
-	// }
 }
 
 void VirtualMachine::_checkStack( size_t value, avm_instruct const & instruction )
@@ -338,11 +270,9 @@ VirtualMachine::VmInstructionException::VmInstructionException( std::string cons
 
 const char*					VirtualMachine::VmInstructionException::what() const throw()
 {
-	// std::string test = getErrType();
 	std::string val = "";
 	if (this->_errorInstr.instrType.type != "")
 		val = " " + this->_errorInstr.instrType.type + "(" + this->_errorInstr.instrType.value + ")";
-	// std::string ret = "AbstractVM: " + std::string(std::runtime_error::what()) + " : on instruction \"" + this->_errorInstr.name + val + "\"";
 	std::string ret = std::string(std::runtime_error::what()) + " : on instruction \"" + this->_errorInstr.name + val + "\"";
 	return ret.c_str();
 }
@@ -361,13 +291,7 @@ VirtualMachine::VirtualMachineExecException::VirtualMachineExecException( std::s
 
 const char*					VirtualMachine::VirtualMachineExecException::what() const throw()
 {
-	// std::string test = getErrType();
 	std::string ret = "VirtualMachine : " + std::string(std::runtime_error::what());
-
- 	// std::string val = "";
-	// if (this->_errorInstr.instrType.type != "")
-	// 	val = " " + this->_errorInstr.instrType.type + "(" + this->_errorInstr.instrType.value + ")";
-	// std::string ret = "AbstractVM: " + std::string(std::runtime_error::what()) + " : on instruction \"" + this->_errorInstr.name + val + "\"";
 	return ret.c_str();
 }
 
