@@ -84,34 +84,20 @@ void						Parser::parseFile( void )
 	while (std::getline(*this->_fd, line))
 	{
 		this->_lineCount++;
-//		std::cout << "Getline : " << line << std::endl; //DEBUG
 		if (line == "")
 			continue ;
 		if ( this->_fd == &std::cin && !std::strncmp(line.c_str(), ";;", 2))
 			break ;
 		try
 		{
-			// try
-			// {
-				ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), this->_grammar, boost::spirit::ascii::space, this->_instructionList);
-			// }
-			// catch (std::exception & e)
-			// {
 
-			// }
+				ret = boost::spirit::qi::phrase_parse(line.begin(), line.end(), this->_grammar, boost::spirit::ascii::space, this->_instructionList);
+
 			if (!ret)
 				this->_checkFailedInstruction(line);
 		}
 		catch (boost::spirit::qi::expectation_failure<std::string::iterator> const& x)
 		{
-			// using boost::spirit::basic_info_walker;
-
-			// printer pr;
-			// basic_info_walker<printer> walker(pr, x.what_.tag, 0);
-			// boost::apply_visitor(walker, x.what_.value);
-			// std::cout << "expected: "; print_info(x.what_);
-			// std::cout << "WHAT : " << x.what() << std::endl;
-			// std::cout << "got: \"" << std::string(x.first, x.last) << '"' << std::endl;
 
 			std::string		error;
 
@@ -122,12 +108,7 @@ void						Parser::parseFile( void )
 	if (!this->_parsingSuccess)
 	{
 		throw Parser::ParsingException(this->_exceptionList);
-	// std::cout << "FAILLLLLLLLLLLLLLLL" << std::endl;
-		// std::list<std::string>::iterator	it;
-		// std::list<std::string>::iterator	ite = this->_exceptionList.end();
 
-		// for (it  = this->_exceptionList.begin(); it != ite; it++ )
-		// 	std::cout << "-->" << *it << std::endl;
 	}
 }
 
@@ -149,7 +130,7 @@ std::istream*				Parser::getFd( void ) const
 Parser::ParsingException::ParsingException(std::list<std::string> const & errorList) throw()
 	: std::runtime_error("bla"), _errorList(errorList)
 {
-	std::cout << "Parsing exeption created" << std::endl;
+
 }
 
 const char*					Parser::ParsingException::what() const throw()
@@ -174,35 +155,3 @@ Parser::ParsingException::~ParsingException() throw()
 	return ;
 }
 
-// Parser::ParsingException::ParsingException(std::string const & errType, int const & online, std::string const & instruction) throw()
-// 	: std::runtime_error(errType), _errType(errType), _line(online), _instruction(instruction)
-// {
-
-// }
-
-// int 				Parser::ParsingException::getLine() const
-// {
-// 	return (this->_line);
-// }
-
-// std::string 		Parser::ParsingException::getInstruction() const
-// {
-// 	return (this->_instruction);
-// }
-
-// std::string 		Parser::ParsingException::getErrType() const
-// {
-// 	return (this->_errType);
-// }
-
-// const char*					Parser::ParsingException::what() const throw()
-// {
-// 	std::string test = getErrType();
-// 	std::string ret = "AbstractVM: " + test + "\n" + "AbstractVM: error line " + boost::lexical_cast<std::string>(this->_line) + " : " + this->_instruction + "\n";
-// 	return ret.c_str();
-// }
-
-// Parser::ParsingException::~ParsingException() throw()
-// {
-// 	return ;
-// }

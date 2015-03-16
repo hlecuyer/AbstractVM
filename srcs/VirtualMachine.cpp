@@ -220,7 +220,8 @@ void VirtualMachine::printVM(avm_instruct const & instruction)
 		TOperand<int8_t> const *		addr;
 
 		addr = reinterpret_cast<TOperand<int8_t> const *>(this->_stack.top());
-		std::cout << static_cast< const char>(addr->getValue());
+		if (addr->getValue() >= 0)
+			std::cout << addr->getValue();
 	}
 	else
 	{

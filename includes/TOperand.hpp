@@ -188,9 +188,9 @@ template <typename T>
 template <typename Q>
 Q TOperand<T>::_subOp (Q a, Q b) const
 {
-	if (b > 0 && a > std::numeric_limits<Q>::max() + b)
+	if (b < 0 && a > std::numeric_limits<Q>::max() + b)
 		throw TOperand<T>::OperandOverflowException();
-	if (b < 0 && a < std::numeric_limits<Q>::lowest() + b)
+	if (b > 0 && a < std::numeric_limits<Q>::lowest() + b)
 		throw TOperand<T>::OperandUnderflowException();
 	return (a - b);
 }
