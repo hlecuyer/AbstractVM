@@ -24,10 +24,8 @@ private:
 	std::map<std::string, eOperandType>					_typeMap;
 	std::map<std::string, instructionFunctionPtr>		_functionInstruction;
 
-	//ICI NEW
 	OperandFactory										_operandFactory;
 
-	//EXIT
 	bool												_exit;
 
 	VirtualMachine();
@@ -60,7 +58,8 @@ public:
 		VirtualMachineExecException() throw();
 
 	public:
-		VirtualMachineExecException(std::string const & errorMsg) throw();
+		// VirtualMachineExecException(std::string const & errorMsg) throw();
+		VirtualMachineExecException(const char * errorMsg) throw();
 		~VirtualMachineExecException() throw();
 		virtual const char* 		what() const throw();
 
@@ -96,4 +95,3 @@ public:
 };
 
 #endif // ** VIRTUALMACHINE ** //
-

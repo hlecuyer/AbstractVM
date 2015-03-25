@@ -43,7 +43,9 @@ void	VirtualMachine::execute()
 			found = this->_functionInstruction.find(it->name);
 			if (found != this->_functionInstruction.end())
 			{
+				std::cout << "IN" << std::endl;
 				(this->*(_functionInstruction[it->name]))(*it);
+				std::cout << "OUT" << std::endl;
 			}
 			if (this->_exit == true)
 				break;
@@ -53,6 +55,7 @@ void	VirtualMachine::execute()
 	}
 	catch (std::exception & e)
 	{
+		std::cout << "IN CATCH >" << e.what() << "<" << std::endl;
 		this->_deleteStack();
 		throw VirtualMachineExecException(e.what());
 	}
@@ -77,12 +80,18 @@ void VirtualMachine::assertVM(avm_instruct const & instruction)
 
 	this->_checkStack(1, instruction);
 	found = this->_typeMap.find(instruction.instrType.type);
+	std::cout << "YOLO ? " << std::endl;
 	if (found != this->_typeMap.end())
 	{
 		assertValue = this->_operandFactory.createOperand(found->second, instruction.instrType.value);
 		if (this->_stack.top()->getType() != assertValue->getType() || this->_stack.top()->toString() != assertValue->toString())
+		{
+			delete assertValue;
+			std::cout << "ICICIICICICI" << std::endl;
 			throw VmInstructionException("Failed assert", instruction);
+		}
 		delete assertValue;
+		std::cout << "WUT ? " << std::endl;
 	}
 }
 
@@ -208,7 +217,7 @@ void VirtualMachine::exitVM(avm_instruct const & instruction)
 {
 	static_cast<void>(instruction);
 	this->_deleteStack();
-	this->_exit = true;	
+	this->_exit = true;
 }
 
 void VirtualMachine::printVM(avm_instruct const & instruction)
@@ -271,10 +280,12 @@ VirtualMachine::VmInstructionException::VmInstructionException( std::string cons
 
 const char*					VirtualMachine::VmInstructionException::what() const throw()
 {
+
 	std::string val = "";
 	if (this->_errorInstr.instrType.type != "")
 		val = " " + this->_errorInstr.instrType.type + "(" + this->_errorInstr.instrType.value + ")";
 	std::string ret = std::string(std::runtime_error::what()) + " : on instruction \"" + this->_errorInstr.name + val + "\"";
+	std::cout << "IN EXCEPT : >>>" << this->_errorInstr.name << "<<< >>>" << std::runtime_error::what() << "<<<" << std::endl << "RET -> " << ret << std::endl;
 	return ret.c_str();
 }
 
@@ -284,14 +295,16 @@ VirtualMachine::VmInstructionException::~VmInstructionException() throw()
 }
 
 
-VirtualMachine::VirtualMachineExecException::VirtualMachineExecException( std::string const & errorMsg ) throw()
+// VirtualMachine::VirtualMachineExecException::VirtualMachineExecException( std::string const & errorMsg ) throw()
+VirtualMachine::VirtualMachineExecException::VirtualMachineExecException( const char * errorMsg ) throw()
 	: std::runtime_error(errorMsg)
 {
-
+	std::cout << "VMEXECEXEPT CONSTRUCT   >>" << errorMsg << "<<" << std::endl;
 }
 
 const char*					VirtualMachine::VirtualMachineExecException::what() const throw()
 {
+	std::cout << "VMEXECEXEPT WHAT   >>" << std::runtime_error::what() << "<<" << std::endl;
 	std::string ret = "VirtualMachine : " + std::string(std::runtime_error::what());
 	return ret.c_str();
 }

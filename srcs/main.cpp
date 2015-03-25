@@ -6,7 +6,7 @@
 //   By: hlecuyer <hlecuyer@student.42.fr>          +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/02/10 12:25:28 by hlecuyer          #+#    #+#             //
-//   Updated: 2015/02/25 12:16:43 by hlecuyer         ###   ########.fr       //
+//   Updated: 2015/03/25 13:39:51 by mle-roy          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -21,6 +21,7 @@
 int main(int argc, char **argv)
 {
     Parser *            parser;
+	VirtualMachine *	VM;
     std::ifstream       stream;
 
 	try
@@ -29,9 +30,11 @@ int main(int argc, char **argv)
 		{
 			parser = new Parser();
 			parser->parseFile();
-			VirtualMachine				VM(parser->getInstructionList());
-			VM.execute();
+			// VirtualMachine				VM(parser->getInstructionList());
+			VM = new VirtualMachine(parser->getInstructionList());
+			VM->execute();
 			delete parser;
+			delete VM;
 		}
 		else
 		{
@@ -45,23 +48,26 @@ int main(int argc, char **argv)
 					stream.open(argv[i]);
 					if (stream.is_open())
 					{
-//						Parser 						parser(&stream);
 						parser = new Parser(&stream);
 						parser->parseFile();
-						VirtualMachine				VM(parser->getInstructionList());
-						VM.execute();
+						// VirtualMachine				VM(parser->getInstructionList());
+						VM = new VirtualMachine(parser->getInstructionList());
+						VM->execute();
 						delete parser;
+						delete VM;
 					}
 					else
 					{
-						std::string ret = std::string("Fail to open file: ") + argv[i];
+						std::string ret = std::string("Failed to open file: ") + argv[i];
 						throw std::runtime_error(ret);
 					}
 				}
 				catch (std::exception & e)
 				{
 					std::cout << "Abstract VM: " << e.what() << std::endl;
+					std::cout << "Type:    " << typeid(e).name() << std::endl;
 					delete parser;
+					delete VM;
 				}
 				i++;
 				std::cout << "----------------------" << std::endl;
