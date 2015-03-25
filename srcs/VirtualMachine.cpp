@@ -57,7 +57,9 @@ void	VirtualMachine::execute()
 	{
 		std::cout << "IN CATCH >" << e.what() << "<" << std::endl;
 		this->_deleteStack();
-		throw VirtualMachineExecException(e.what());
+		std::cout << "IN CATCH2 >" << e.what() << "<" << std::endl;
+		std::string l(e.what());
+		throw VirtualMachineExecException(l.c_str());
 	}
 }
 
@@ -291,6 +293,7 @@ const char*					VirtualMachine::VmInstructionException::what() const throw()
 
 VirtualMachine::VmInstructionException::~VmInstructionException() throw()
 {
+	std::cout << "DESTRUCTION_________________________" << std::endl;
 	return ;
 }
 
