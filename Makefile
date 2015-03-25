@@ -28,7 +28,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	$(COMPILER) $(LFLAGS) $@ $^
 
-$(OBJ): $(OBJ_DIR)
+$(OBJ): | $(OBJ_DIR)
 
 $(OBJ_DIR):
 	mkdir -p $@

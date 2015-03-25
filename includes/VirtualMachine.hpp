@@ -58,8 +58,7 @@ public:
 		VirtualMachineExecException() throw();
 
 	public:
-		// VirtualMachineExecException(std::string const & errorMsg) throw();
-		VirtualMachineExecException(const char * errorMsg) throw();
+		VirtualMachineExecException(std::string const & errorMsg) throw();
 		~VirtualMachineExecException() throw();
 		virtual const char* 		what() const throw();
 

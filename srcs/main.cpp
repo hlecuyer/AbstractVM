@@ -6,7 +6,7 @@
 //   By: hlecuyer <hlecuyer@student.42.fr>          +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/02/10 12:25:28 by hlecuyer          #+#    #+#             //
-//   Updated: 2015/03/25 13:39:51 by mle-roy          ###   ########.fr       //
+//   Updated: 2015/03/25 15:39:02 by mle-roy          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -23,6 +23,7 @@ int main(int argc, char **argv)
     Parser *            parser;
 	VirtualMachine *	VM;
     std::ifstream       stream;
+	bool				isVM;
 
 	try
 	{
@@ -30,7 +31,6 @@ int main(int argc, char **argv)
 		{
 			parser = new Parser();
 			parser->parseFile();
-			// VirtualMachine				VM(parser->getInstructionList());
 			VM = new VirtualMachine(parser->getInstructionList());
 			VM->execute();
 			delete parser;
@@ -41,6 +41,7 @@ int main(int argc, char **argv)
 			int i = 1;
 			while (i < argc)
 			{
+				isVM = false;
 				std::cout << "Abstract VM: executing file: *** " <<  argv[i] << " ***" << std::endl;
 				try
 				{
@@ -50,11 +51,12 @@ int main(int argc, char **argv)
 					{
 						parser = new Parser(&stream);
 						parser->parseFile();
-						// VirtualMachine				VM(parser->getInstructionList());
 						VM = new VirtualMachine(parser->getInstructionList());
+						isVM = true;
 						VM->execute();
 						delete parser;
 						delete VM;
+						isVM = false;
 					}
 					else
 					{
@@ -65,9 +67,9 @@ int main(int argc, char **argv)
 				catch (std::exception & e)
 				{
 					std::cout << "Abstract VM: " << e.what() << std::endl;
-					std::cout << "Type:    " << typeid(e).name() << std::endl;
 					delete parser;
-					delete VM;
+					if (isVM)
+						delete VM;
 				}
 				i++;
 				std::cout << "----------------------" << std::endl;
